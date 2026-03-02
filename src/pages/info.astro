@@ -7,6 +7,8 @@
         <title>About Strudel-app</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0a0a0a" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -291,5 +293,15 @@ s("[bd hh bd hh, bd sd bd sd]")</code></pre>
                 </div>
             </div>
         </div>
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(
+                        (reg) => console.log('SW registered!', reg),
+                        (err) => console.error('SW registration failed!', err)
+                    );
+                });
+            }
+        </script>
     </body>
 </html>
