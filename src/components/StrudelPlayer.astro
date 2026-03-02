@@ -331,6 +331,17 @@ import ToastContainer from './ToastContainer.astro';
   function applyVolume(val) {
     const v = parseFloat(val);
     if (volVal) volVal.textContent = `${Math.round(v * 100)}%`;
+    
+    // Direct control of master gain node
+    const controller = getSuperdoughAudioController();
+    if (controller && controller.output && controller.output.destinationGain) {
+      const gainNode = controller.output.destinationGain;
+      const ctx = controller.audioContext;
+      const now = ctx.currentTime;
+      // Use a short ramp to avoid clicks
+      gainNode.gain.setTargetAtTime(v, now, 0.02);
+    }
+
     if (repl && repl.setMasterGain) {
       repl.setMasterGain(v);
     }
