@@ -1,82 +1,142 @@
 ---
 /**
  * MusicSettings Component
- * Contains Volume and Swing sliders.
+ * Contains global audio performance controls.
  */
 ---
 <div class="r-panel" id="settings-panel">
   <div class="panel-titlebar">
     <span class="panel-title">MUSIC SETTINGS</span>
   </div>
-  <div class="merged-settings-content">
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="master-vol" min="0" max="1" step="0.01" value="0.7" class="v-slider" />
+  <div class="music-settings-content">
+    <div class="settings-grid">
+      <!-- ROW 1: CORE & FILTERS -->
+      <div class="settings-row">
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-vol" min="0" max="1.5" step="0.01" value="0.7" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">VOL</span>
+          <span id="vol-val" class="v-slider-val">70%</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-pan" min="-1" max="1" step="0.01" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">PAN</span>
+          <span id="pan-val" class="v-slider-val">C</span>
+        </div>
+
+        <div class="v-slider-sep"></div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-locut" min="20" max="20000" step="1" value="20" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">LO CUT</span>
+          <span id="locut-val" class="v-slider-val">20Hz</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-hicut" min="20" max="20000" step="1" value="20000" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">HI CUT</span>
+          <span id="hicut-val" class="v-slider-val">20k</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-q" min="0" max="20" step="0.1" value="1" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">FILT Q</span>
+          <span id="q-val" class="v-slider-val">1.0</span>
+        </div>
+
+        <div class="v-slider-sep"></div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-room" min="0" max="1" step="0.01" value="0.1" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">ROOM</span>
+          <span id="room-val" class="v-slider-val">10%</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-delay" min="0" max="1" step="0.01" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">DELAY</span>
+          <span id="delay-val" class="v-slider-val">0%</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-detune" min="-1200" max="1200" step="1" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">DETUNE</span>
+          <span id="detune-val" class="v-slider-val">0c</span>
+        </div>
       </div>
-      <span class="v-slider-lbl">VOL</span>
-      <span id="vol-val" class="v-slider-val">70%</span>
-    </div>
 
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="master-pan" min="-1" max="1" step="0.01" value="0" class="v-slider" />
+      <!-- ROW 2: TEXTURES, DYNAMICS & UTILS -->
+      <div class="settings-row">
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-drive" min="0" max="100" step="1" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">DRIVE</span>
+          <span id="drive-val" class="v-slider-val">0%</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-crush" min="0" max="16" step="1" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">CRUSH</span>
+          <span id="crush-val" class="v-slider-val">OFF</span>
+        </div>
+
+        <div class="v-slider-sep"></div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-attack" min="0" max="2" step="0.01" value="0.005" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">ATTACK</span>
+          <span id="attack-val" class="v-slider-val">5ms</span>
+        </div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-release" min="0" max="4" step="0.01" value="0.1" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">RELEASE</span>
+          <span id="release-val" class="v-slider-val">100ms</span>
+        </div>
+
+        <div class="v-slider-sep"></div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="master-width" min="0" max="2" step="0.01" value="1" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">WIDTH</span>
+          <span id="width-val" class="v-slider-val">100%</span>
+        </div>
+
+        <div class="v-slider-sep"></div>
+
+        <div class="v-slider-group">
+          <div class="v-slider-wrap">
+            <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="v-slider" />
+          </div>
+          <span class="v-slider-lbl">SWING</span>
+          <span id="swing-val" class="v-slider-val">0%</span>
+        </div>
       </div>
-      <span class="v-slider-lbl">PAN</span>
-      <span id="pan-val" class="v-slider-val">C</span>
-    </div>
-
-    <div class="v-slider-sep"></div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="low-cut" min="20" max="1000" step="1" value="20" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">LO CUT</span>
-      <span id="low-cut-val" class="v-slider-val">20Hz</span>
-    </div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="high-cut" min="1000" max="20000" step="1" value="20000" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">HI CUT</span>
-      <span id="high-cut-val" class="v-slider-val">20k</span>
-    </div>
-
-    <div class="v-slider-sep"></div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="master-room" min="0" max="1" step="0.01" value="0.1" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">ROOM</span>
-      <span id="room-val" class="v-slider-val">10%</span>
-    </div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="master-delay" min="0" max="1" step="0.01" value="0" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">DELAY</span>
-      <span id="delay-val" class="v-slider-val">0%</span>
-    </div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="master-detune" min="-1200" max="1200" step="1" value="0" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">DETUNE</span>
-      <span id="detune-val" class="v-slider-val">0c</span>
-    </div>
-
-    <div class="v-slider-sep"></div>
-
-    <div class="v-slider-group">
-      <div class="v-slider-wrap">
-        <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="v-slider" />
-      </div>
-      <span class="v-slider-lbl">SWING</span>
-      <span id="swing-val" class="v-slider-val">0%</span>
     </div>
   </div>
 </div>
@@ -111,24 +171,40 @@
     align-items: center;
     gap: 6px;
   }
-  .merged-settings-content {
+  .music-settings-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 10px;
+    background: #0a0a0a;
+  }
+  .settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .settings-row {
+    width: 100%;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding: 12px 6px;
-    gap: 2px;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 10px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .v-slider-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
-    min-width: 40px;
+    min-width: 35px;
   }
   .v-slider-wrap {
-    height: 70px;
+    height: 65px;
     width: 20px;
     display: flex;
     align-items: center;
@@ -137,76 +213,68 @@
   }
   .v-slider {
     -webkit-appearance: none;
-    width: 70px; /* Length of the slider (vertical height after rotation) */
-    height: 6px;
-    background: #050505;
-    border: 1px solid var(--c-border);
-    border-radius: 3px;
+    width: 65px;
+    height: 5px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 2px;
     outline: none;
     cursor: pointer;
     transform: rotate(-90deg);
     position: absolute;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
   }
   .v-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px; /* Width of the rectangular knob */
-    height: 20px; /* Height of the rectangular knob */
-    background: linear-gradient(to right, #2a2a2a, #3a3a3a, #2a2a2a);
+    width: 12px;
+    height: 18px;
+    background: linear-gradient(to right, #444, #666, #444);
     cursor: pointer;
     border: 1px solid #000;
     border-radius: 2px;
-    box-shadow: 
-      0 2px 4px rgba(0,0,0,0.4),
-      inset 0 1px 1px rgba(255,255,255,0.1);
-    position: relative;
-    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
-  /* Pseudo-element for the line on the fader knob - using a gradient trick for the thumb line */
+  /* Pseudo-element line for thumb */
   .v-slider::-webkit-slider-thumb {
     background-image: 
       linear-gradient(to bottom, transparent 45%, #ffffff 45%, #ffffff 55%, transparent 55%),
       linear-gradient(to right, #333, #444, #333);
-    background-size: 8px 100%, 100% 100%;
+    background-size: 6px 100%, 100% 100%;
     background-position: center, center;
     background-repeat: no-repeat;
   }
   .v-slider::-moz-range-thumb {
-    width: 12px;
-    height: 20px;
-    background: linear-gradient(to right, #2a2a2a, #3a3a3a, #2a2a2a);
+    width: 10px;
+    height: 16px;
+    background: linear-gradient(to right, #2a2a2a, #333, #2a2a2a);
     cursor: pointer;
     border: 1px solid #000;
     border-radius: 2px;
-    background-image: 
-      linear-gradient(to bottom, transparent 45%, #ffffff 45%, #ffffff 55%, transparent 55%),
-      linear-gradient(to right, #333, #444, #333);
-    background-size: 8px 100%, 100% 100%;
-    background-position: center, center;
-    background-repeat: no-repeat;
   }
   .v-slider-lbl {
-    font-size: 8px;
-    font-weight: 700;
-    color: var(--c-label);
+    font-size: 7.5px;
+    font-weight: 800;
+    color: #fff;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     text-align: center;
     white-space: nowrap;
+    opacity: 0.9;
   }
   .v-slider-val {
     font-family: var(--f-mono);
-    font-size: 9px;
-    color: var(--c-muted);
-    min-width: 24px;
+    font-size: 8.5px;
+    color: var(--c-accent);
+    min-width: 20px;
     text-align: center;
+    font-weight: 600;
   }
   .v-slider-sep {
     width: 1px;
-    height: 80%;
+    height: 40px;
     background: var(--c-border);
-    margin: 0 4px;
+    opacity: 0.3;
     align-self: center;
   }
 </style>

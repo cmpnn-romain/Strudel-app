@@ -317,10 +317,10 @@ import ToastContainer from './ToastContainer.astro';
   const volVal = document.getElementById("vol-val");
   const panSlider = document.getElementById("master-pan");
   const panVal = document.getElementById("pan-val");
-  const lowCutSlider = document.getElementById("low-cut");
-  const lowCutVal = document.getElementById("low-cut-val");
-  const highCutSlider = document.getElementById("high-cut");
-  const highCutVal = document.getElementById("high-cut-val");
+  const lowCutSlider = document.getElementById("master-locut");
+  const lowCutVal = document.getElementById("locut-val");
+  const highCutSlider = document.getElementById("master-hicut");
+  const highCutVal = document.getElementById("hicut-val");
   const swingSlider = document.getElementById("global-swing");
   const swingVal = document.getElementById("swing-val");
 
@@ -384,43 +384,55 @@ import ToastContainer from './ToastContainer.astro';
     if (v < 0) text = `L${Math.round(Math.abs(v) * 100)}`;
     if (v > 0) text = `R${Math.round(v * 100)}`;
     if (panVal) panVal.textContent = text;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyLowCut(val) {
     const v = parseInt(val);
     globalThis.globalLowCut = v;
     if (lowCutVal) lowCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
-  function applyHighCut(val) {
-    const v = parseInt(val);
-    globalThis.globalHighCut = v;
     if (highCutVal) highCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
+  }
+
+  let updateTimeout = null;
+  function debouncedUpdateEffects() {
+    if (!isPlaying) return;
+    clearTimeout(updateTimeout);
+    updateTimeout = setTimeout(() => {
+      updateMasterEffects();
+    }, 50); // 50ms debounce
   }
 
   async function updateMasterEffects() {
     if (!repl || !isPlaying) return;
     const code = codeEl.value.trim();
     if (!code) return;
-    const cleanCode = code.replace(/[;\s]+$/, '');
-    try {
-      await repl.evaluate(`(\n${cleanCode}\n)
+    
+    // Build the master effect chain once to reuse it
+    const effects = `
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
+        .q(globalThis.globalQ || 1)
         .room(globalThis.globalRoom || 0)
         .delay(globalThis.globalDelay || 0)
         .detune(globalThis.globalDetune || 0)
-        .q(globalThis.globalQ || 1)
         .distort(globalThis.globalDrive / 100 || 0)
         .crush(globalThis.globalCrush || 0)
         .attack(globalThis.globalAttack || 0.005)
         .release(globalThis.globalRelease || 0.1)
-        .analyze(1)`);
-    } catch (err) {}
+        .analyze(1)`;
+
+    const cleanCode = code.replace(/[;\s]+$/, '');
+    try {
+      await repl.evaluate(`(\n${cleanCode}\n)${effects}`);
+    } catch (err) {
+      console.error("[DAW] re-eval error:", err);
+    }
   }
 
   function applySwing(val) {
@@ -433,42 +445,42 @@ import ToastContainer from './ToastContainer.astro';
     const v = parseFloat(val);
     globalThis.globalRoom = v;
     if (roomVal) roomVal.textContent = `${Math.round(v * 100)}%`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyQ(val) {
     const v = parseFloat(val);
     globalThis.globalQ = v;
     if (qVal) qVal.textContent = v.toFixed(1);
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyDrive(val) {
     const v = parseInt(val);
     globalThis.globalDrive = v;
     if (driveVal) driveVal.textContent = `${v}%`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyCrush(val) {
     const v = parseInt(val);
     globalThis.globalCrush = v;
     if (crushVal) crushVal.textContent = v === 0 ? "OFF" : `${v}b`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyAttack(val) {
     const v = parseFloat(val);
     globalThis.globalAttack = v;
     if (attackVal) attackVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyRelease(val) {
     const v = parseFloat(val);
     globalThis.globalRelease = v;
     if (releaseVal) releaseVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyWidth(val) {
@@ -478,21 +490,21 @@ import ToastContainer from './ToastContainer.astro';
     // Width can be applied by scaling pan or via specific strudel methods if they exist.
     // In strudel, there isn't a direct master .width() for patterns that works globally easily, 
     // but .pan can be influenced. For now, we update state.
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyDelay(val) {
     const v = parseFloat(val);
     globalThis.globalDelay = v;
     if (delayVal) delayVal.textContent = `${Math.round(v * 100)}%`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   function applyDetune(val) {
     const v = parseInt(val);
     globalThis.globalDetune = v;
     if (detuneVal) detuneVal.textContent = `${v}c`;
-    if (isPlaying) updateMasterEffects();
+    if (isPlaying) debouncedUpdateEffects();
   }
 
   if (volSlider) volSlider.addEventListener("input", (e) => applyVolume(e.target.value));
@@ -839,14 +851,22 @@ import ToastContainer from './ToastContainer.astro';
       // Strip trailing semicolons so .analyze(1) can be appended safely
       const cleanCode = code.replace(/[;\s]+$/, '');
       const isOnce = loopMode.value === 'once';
-      const evalCode = `(\n${cleanCode}\n)
+      
+      const effects = `
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
+        .q(globalThis.globalQ || 1)
         .room(globalThis.globalRoom || 0)
         .delay(globalThis.globalDelay || 0)
         .detune(globalThis.globalDetune || 0)
+        .distort(globalThis.globalDrive / 100 || 0)
+        .crush(globalThis.globalCrush || 0)
+        .attack(globalThis.globalAttack || 0.005)
+        .release(globalThis.globalRelease || 0.1)
         .analyze(1)`;
+
+      const evalCode = `(\n${cleanCode}\n)${effects}`;
 
       // Apply master effects to the pattern
       await repl.evaluate(evalCode);
