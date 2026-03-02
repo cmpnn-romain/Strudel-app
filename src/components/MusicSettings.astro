@@ -111,33 +111,54 @@
   }
   .v-slider {
     -webkit-appearance: none;
-    width: 70px; /* Width is height because of rotation */
-    height: 4px;
-    background: var(--c-border2);
-    border-radius: 2px;
+    width: 70px; /* Length of the slider (vertical height after rotation) */
+    height: 6px;
+    background: #050505;
+    border: 1px solid var(--c-border);
+    border-radius: 3px;
     outline: none;
     cursor: pointer;
     transform: rotate(-90deg);
     position: absolute;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
   }
   .v-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--c-text);
+    width: 12px; /* Width of the rectangular knob */
+    height: 20px; /* Height of the rectangular knob */
+    background: linear-gradient(to right, #2a2a2a, #3a3a3a, #2a2a2a);
     cursor: pointer;
-    border: 2px solid var(--c-panel);
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    border: 1px solid #000;
+    border-radius: 2px;
+    box-shadow: 
+      0 2px 4px rgba(0,0,0,0.4),
+      inset 0 1px 1px rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 2;
+  }
+  /* Pseudo-element for the line on the fader knob - using a gradient trick for the thumb line */
+  .v-slider::-webkit-slider-thumb {
+    background-image: 
+      linear-gradient(to bottom, transparent 45%, #ffffff 45%, #ffffff 55%, transparent 55%),
+      linear-gradient(to right, #333, #444, #333);
+    background-size: 8px 100%, 100% 100%;
+    background-position: center, center;
+    background-repeat: no-repeat;
   }
   .v-slider::-moz-range-thumb {
     width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--c-text);
+    height: 20px;
+    background: linear-gradient(to right, #2a2a2a, #3a3a3a, #2a2a2a);
     cursor: pointer;
-    border: 2px solid var(--c-panel);
+    border: 1px solid #000;
+    border-radius: 2px;
+    background-image: 
+      linear-gradient(to bottom, transparent 45%, #ffffff 45%, #ffffff 55%, transparent 55%),
+      linear-gradient(to right, #333, #444, #333);
+    background-size: 8px 100%, 100% 100%;
+    background-position: center, center;
+    background-repeat: no-repeat;
   }
   .v-slider-lbl {
     font-size: 8px;
