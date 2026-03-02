@@ -1,308 +1,33 @@
 ---
+import Toolbar from './Toolbar.astro';
+import Editor from './Editor.astro';
+import Visualizers from './Visualizers.astro';
+import MusicSettings from './MusicSettings.astro';
+import LevelsPanel from './LevelsPanel.astro';
+import RecordingModal from './RecordingModal.astro';
+import ToastContainer from './ToastContainer.astro';
 ---
 
 <div id="daw-root">
-  
-  <header id="daw-toolbar">
-    <div class="tb-brand">
-      <svg class="tb-logo-icon" viewBox="0 0 32 32" fill="none">
-        <circle
-          cx="16"
-          cy="16"
-          r="14"
-          stroke="#ffffff"
-          stroke-width="1.5"
-          opacity="0.6"></circle>
-        <path
-          d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6"
-          stroke="#ffffff"
-          stroke-width="1.5"
-          stroke-linecap="round"></path>
-        <circle cx="16" cy="16" r="2.5" fill="#ffffff"></circle>
-      </svg>
-      <span class="tb-brand-name"
-        >STRUDEL<span class="tb-brand-sub">APP</span>
-      </span>
-    </div>
+  <Toolbar />
 
-    <div class="tb-transport">
-      <button
-        id="btn-init"
-        class="tb-btn tb-btn--init"
-        title="Pre-load Audio Engine"
-      >
-        <svg viewBox="0 0 20 20" fill="currentColor"
-          ><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm2 11H8V7h4v6z"></path>
-        </svg>
-        INIT
-      </button>
-
-      <button
-        id="btn-play"
-        class="tb-btn tb-btn--play"
-        title="Play (Ctrl+Enter)"
-        disabled
-      >
-        <svg viewBox="0 0 20 20" fill="currentColor"
-          ><polygon points="4,2 16,10 4,18"></polygon>
-        </svg>
-        <span id="btn-play-label">PLAY</span>
-      </button>
-
-      <button id="btn-stop" class="tb-btn tb-btn--stop" title="Stop" disabled>
-        <svg viewBox="0 0 20 20" fill="currentColor"
-          ><rect x="3" y="3" width="14" height="14" rx="1.5"></rect>
-        </svg>
-        STOP
-      </button>
-
-      <div class="tb-sep"></div>
-
-      <div class="tb-bpm-group">
-        <label class="tb-label">BPM</label>
-        <button class="tb-nudge" id="bpm-down">▾</button>
-        <input
-          id="bpm-display"
-          class="tb-bpm-val"
-          type="number"
-          min="20"
-          max="300"
-          value="120"
-          title="BPM — click to edit"
-        />
-        <button class="tb-nudge" id="bpm-up">▴</button>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <div class="tb-loop-group">
-        <label class="tb-label">LOOP</label>
-        <select id="loop-mode" class="tb-select" title="Playback behavior">
-          <option value="infinite">Infinite</option>
-          <option value="once">Once</option>
-        </select>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <div class="tb-time-group">
-        <span class="tb-label">TIME</span>
-        <span id="tb-time" class="tb-time-val">0:00.000</span>
-        <span class="tb-time-sep">|</span>
-        <span class="tb-label">SR</span>
-        <span id="info-samplerate" class="tb-time-val" style="min-width: unset; font-size: 11px;">–</span>
-      </div>
-    </div>
-
-    <div class="tb-rightmost">
-      <input
-        type="file"
-        id="file-import"
-        accept=".strudel,.txt"
-        style="display: none;"
-      />
-      <div class="tb-action-group">
-        <button
-          id="btn-import-code"
-          class="tb-btn tb-btn--action"
-          title="Import Code">↑ LOAD</button>
-        <button
-          id="btn-dl-code"
-          class="tb-btn tb-btn--action"
-          title="Download Code">↓ SAVE</button>
-        <button
-          id="btn-rec-video"
-          class="tb-btn tb-btn--action"
-          title="Record Video">● REC</button>
-      </div>
-      <div class="tb-sep"></div>
-      <div class="tb-status">
-        <span id="status-dot" class="st-dot st-dot--idle"></span>
-        <span id="status-text" class="st-text">OFFLINE</span>
-      </div>
-      <a href="/info" class="tb-info-btn">INFO</a>
-      <div class="tb-settings-wrap">
-        <button id="btn-settings" class="tb-info-btn" title="Settings">⚙</button>
-        <div id="settings-popup" class="settings-popup">
-          <div class="settings-popup-title">SETTINGS</div>
-          <div class="settings-popup-row">
-            <span class="settings-popup-lbl">FONT SIZE</span>
-            <div class="setting-controls">
-              <button id="sp-font-down" class="setting-btn">−</button>
-              <span id="sp-font-val" class="setting-val">13</span>
-              <button id="sp-font-up" class="setting-btn">+</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div id="daw-main">
-    
-    <aside id="panel-code">
-      <div class="panel-titlebar">
-        <span class="panel-title">
-          <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"
-            ><path
-              d="M5.5 2l-4 6 4 6M10.5 2l4 6-4 6"
-              stroke="currentColor"
-              stroke-width="1.5"
-              fill="none"></path>
-          </svg>
-          PATTERN EDITOR
-        </span>
-        <div class="panel-actions">
-          <button
-            id="btn-undo"
-            class="panel-action-btn panel-icon-btn"
-            title="Undo (Ctrl+Z)">↺</button>
-          <button
-            id="btn-redo"
-            class="panel-action-btn panel-icon-btn"
-            title="Redo (Ctrl+Shift+Z)">↻</button>
-          <div class="panel-actions-sep"></div>
-          <button
-            id="btn-clear"
-            class="panel-action-btn btn-danger"
-            title="Clear Code">CLEAR</button
-          >
-        </div>
-      </div>
-
-      <div class="editor-area">
-        <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
-        <textarea
-          id="sp-code"
-          class="sp-code"
-          spellcheck="false"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          aria-label="Strudel pattern code"></textarea>
-      </div>
-
-      <pre id="sp-error" class="error-console" hidden></pre>
-    </aside>
+  <main id="daw-main">
+    <Editor />
 
     <div id="panel-right">
-      <div class="r-panel" id="scope-panel">
-        <div class="panel-titlebar">
-          <span class="panel-title">
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              width="12"
-              height="12"
-              ><polyline points="0,8 3,5 6,11 9,3 12,8 15,6"></polyline>
-            </svg>
-            OSCILLOSCOPE
-          </span>
-          <span id="scope-db" class="scope-db">— dB</span>
-        </div>
-        <canvas id="sp-visualizer" class="scope-canvas" aria-hidden="true"
-        ></canvas>
-      </div>
-
-      <div class="r-panel" id="spectrum-panel">
-        <div class="panel-titlebar">
-          <span class="panel-title">
-            <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"
-              ><rect x="0" y="8" width="3" height="8"></rect><rect
-                x="4"
-                y="4"
-                width="3"
-                height="12"></rect><rect x="8" y="2" width="3" height="14"
-              ></rect><rect x="12" y="6" width="3" height="10"></rect>
-            </svg>
-            SPECTRUM
-          </span>
-        </div>
-        <canvas id="sp-spectrum" class="scope-canvas" aria-hidden="true"
-        ></canvas>
-      </div>
-
+      <Visualizers />
 
       <div id="bottom-panels">
-        <div class="r-panel" id="settings-panel">
-          <div class="panel-titlebar">
-            <span class="panel-title">MUSIC</span>
-          </div>
-          <div class="merged-settings-content">
-            <div class="setting-row">
-              <span class="setting-lbl">VOLUME</span>
-              <div class="setting-controls">
-                <input type="range" id="master-vol" min="0" max="1" step="0.01" value="0.7" class="setting-slider" />
-                <span id="vol-val" class="setting-val">70%</span>
-              </div>
-            </div>
-            <div class="setting-row">
-              <span class="setting-lbl">SWING</span>
-              <div class="setting-controls">
-                <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="setting-slider" />
-                <span id="swing-val" class="setting-val">0%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="r-panel" id="levels-panel">
-          <div class="panel-titlebar">
-            <span class="panel-title">LEVELS</span>
-          </div>
-          <div class="vu-meter-container">
-            <div class="vu-channel">
-              <div class="vu-bar">
-                <div id="vu-l" class="vu-fill"></div>
-              </div>
-              <span class="vu-lbl">L</span>
-            </div>
-            <div class="vu-channel">
-              <div class="vu-bar">
-                <div id="vu-r" class="vu-fill"></div>
-              </div>
-              <span class="vu-lbl">R</span>
-            </div>
-            <div class="vu-scale">
-              <span>0</span>
-              <span>-6</span>
-              <span>-12</span>
-              <span>-24</span>
-              <span>-48</span>
-            </div>
-          </div>
-        </div>
+        <MusicSettings />
+        <LevelsPanel />
       </div>
     </div>
-  </div>
+  </main>
 
-  <div id="rec-modal" class="modal-overlay" hidden>
-    <div class="modal-box">
-      <h3 class="modal-title">
-        <svg fill="currentColor" width="14" height="14" viewBox="0 0 24 24"
-          ><circle cx="12" cy="12" r="8"></circle>
-        </svg>
-        SELECT RECORDING MODE
-      </h3>
-      <p class="modal-desc">How would you like to record your performance?</p>
-      <div class="modal-actions">
-        <button id="btn-rec-manual" class="modal-btn">
-          <span class="mb-title">MANUAL</span>
-          <span class="mb-desc">Start and stop freely</span>
-        </button>
-        <button id="btn-rec-auto" class="modal-btn mb-auto">
-          <span class="mb-title">AUTO (1 LOOP)</span>
-          <span class="mb-desc">Exactly 1 cycle perfectly trimmed</span>
-        </button>
-      </div>
-      <button id="btn-rec-cancel" class="modal-cancel">CANCEL</button>
-    </div>
-  </div>
+  <RecordingModal />
 </div>
 
-<div id="toast-container" class="toast-container"></div>
+<ToastContainer />
 
 <style>
   :root {
@@ -331,7 +56,7 @@
     margin: 0;
     padding: 0;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 229, 255, 0.3) rgba(0, 0, 0, 0.2);
+    scrollbar-color: var(--c-border2) transparent;
   }
 
   ::-webkit-scrollbar {
@@ -339,15 +64,16 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(0, 229, 255, 0.3);
+    background: var(--c-border2);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 229, 255, 0.6);
+    background: var(--c-muted);
   }
+  
   button {
     border: none;
     cursor: pointer;
@@ -368,1045 +94,28 @@
     user-select: none;
   }
 
-  #daw-toolbar {
-    height: var(--tb-h);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--c-base);
-    border-bottom: 1px solid var(--c-border);
-    padding: 0 12px;
-  }
-
-  .tb-brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-right: 12px;
-    border-right: 1px solid var(--c-border);
-    flex-shrink: 0;
-  }
-  .tb-logo-icon {
-    width: 22px;
-    height: 22px;
-  }
-  .tb-brand-name {
-    font-family: var(--f-mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: #fff;
-  }
-  .tb-brand-sub {
-    color: var(--c-accent);
-    margin-left: 2px;
-    font-weight: 400;
-    opacity: 0.8;
-  }
-
-  .tb-transport {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex: 1;
-  }
-
-  .tb-sep {
-    width: 1px;
-    height: 24px;
-    background: var(--c-border);
-    margin: 0 4px;
-    flex-shrink: 0;
-  }
-
-  .tb-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    height: 28px;
-    padding: 0 12px;
-    border-radius: 4px;
-    font-family: var(--f-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--c-text);
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    transition: all 0.15s;
-  }
-  .tb-btn svg {
-    width: 13px;
-    height: 13px;
-    flex-shrink: 0;
-  }
-  .tb-btn:hover:not(:disabled) {
-    border-color: var(--c-border2);
-    background: var(--c-panel2);
-  }
-  .tb-btn:disabled {
-    opacity: 0.35;
-    pointer-events: none;
-    filter: grayscale(1);
-    cursor: not-allowed;
-  }
-
-  .tb-btn--play {
-    color: var(--c-green);
-    border-color: rgba(0, 255, 136, 0.25);
-  }
-  .tb-btn--play:hover:not(:disabled) {
-    background: rgba(0, 255, 136, 0.08);
-    border-color: var(--c-green);
-  }
-  .tb-btn--play.is-playing {
-    background: rgba(0, 255, 136, 0.12);
-    border-color: var(--c-green);
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-  }
-
-  .tb-btn--init {
-    color: #ffd700;
-    border-color: rgba(255, 215, 0, 0.3);
-  }
-  .tb-btn--init:hover:not(:disabled) {
-    background: rgba(255, 215, 0, 0.1);
-    border-color: #ffd700;
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
-  }
-
-
-  .tb-btn--stop {
-    color: #ff6078;
-    border-color: rgba(255, 96, 120, 0.3);
-  }
-  .tb-btn--stop:hover:not(:disabled) {
-    background: rgba(255, 96, 120, 0.12);
-    border-color: #ff6078;
-    box-shadow: 0 0 8px rgba(255, 96, 120, 0.2);
-  }
-  .tb-btn--stop:not(:disabled) {
-    color: #ffb3bf;
-    border-color: rgba(255, 96, 120, 0.5);
-  }
-
-  .tb-action-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .tb-btn--action {
-    color: var(--c-muted);
-    border-color: var(--c-border);
-  }
-  .tb-btn--action:hover {
-    color: var(--c-text);
-    border-color: var(--c-border2);
-    background: var(--c-panel2);
-  }
-
-  .tb-bpm-group {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    padding: 0 8px;
-    height: 28px;
-  }
-  .tb-label {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--c-label);
-    margin-right: 4px;
-  }
-  .tb-bpm-val {
-    font-family: var(--f-mono);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--c-accent);
-    min-width: 36px;
-    width: 40px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    background: none;
-    border: none;
-    outline: none;
-    padding: 0;
-    cursor: text;
-    -moz-appearance: textfield;
-  }
-  .tb-bpm-val::-webkit-inner-spin-button,
-  .tb-bpm-val::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  .tb-bpm-val:focus {
-    outline: 1px solid var(--c-accent);
-    border-radius: 2px;
-  }
-
-  .tb-nudge {
-    font-size: 12px;
-    color: var(--c-muted);
-    padding: 0 2px;
-    border-radius: 2px;
-    transition: color 0.1s;
-    line-height: 1;
-  }
-  .tb-nudge:hover {
-    color: var(--c-accent);
-  }
-
-  .tb-select {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: var(--c-panel);
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d881cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 4px center;
-    background-size: 14px;
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    color: var(--c-accent);
-    font-family: var(--f-mono);
-    font-size: 11px;
-    padding: 2px 22px 2px 6px;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s;
-  }
-  .tb-select:hover {
-    border-color: rgba(216, 129, 204, 0.5); 
-  }
-  .tb-select:focus {
-    border-color: var(--c-accent);
-    box-shadow: 0 0 0 1px rgba(216, 129, 204, 0.3);
-  }
-
-  .tb-time-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    padding: 0 10px;
-    height: 28px;
-  }
-  .tb-time-val {
-    font-family: var(--f-mono);
-    font-size: 13px;
-    color: var(--c-text);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.5px;
-  }
-  .tb-time-sep {
-    color: var(--c-border2);
-    font-size: 11px;
-    margin: 0 4px;
-  }
-
-  .tb-rightmost {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .tb-info-btn {
-    display: flex;
-    align-items: center;
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    color: var(--c-accent);
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding: 0 10px;
-    height: 28px;
-    text-decoration: none;
-    transition: all 0.2s ease;
-  }
-  .tb-info-btn:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: var(--c-text);
-  }
-  .tb-settings-wrap {
-    position: relative;
-  }
-  .settings-popup {
-    display: none;
-    position: absolute;
-    top: 100%;
-    margin-top: 6px;
-    right: 0;
-    background: var(--c-panel2);
-    border: 1px solid var(--c-border2);
-    border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    padding: 12px 14px;
-    min-width: 200px;
-    z-index: 9000;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .tb-settings-wrap:hover .settings-popup {
-    display: flex;
-  }
-  /* Invisible bridge to prevent closing when moving mouse to popup */
-  .settings-popup::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    height: 10px;
-  }
-  .settings-popup-title {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--c-label);
-    margin-bottom: 2px;
-  }
-  .settings-popup-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .settings-popup-lbl {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--c-muted);
-    flex-shrink: 0;
-  }
-
-  .tb-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    border-radius: 4px;
-    padding: 0 10px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-  .st-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-  .st-dot--idle {
-    background: var(--c-muted);
-  }
-  .st-dot--ready {
-    background: var(--c-green);
-    box-shadow: 0 0 6px var(--c-green);
-  }
-  .st-dot--playing {
-    background: var(--c-green);
-    box-shadow: 0 0 6px var(--c-green);
-    animation: blink 1.2s infinite;
-  }
-  .st-dot--error {
-    background: var(--c-red);
-    box-shadow: 0 0 6px var(--c-red);
-  }
-  .st-text {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--c-muted);
-    text-transform: uppercase;
-  }
-
   #daw-main {
     flex: 1;
     display: flex;
-    min-height: 0;
     overflow: hidden;
-  }
-
-  .panel-titlebar {
-    height: var(--panel-title-h);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 10px;
-    background: var(--c-base);
-    border-bottom: 1px solid var(--c-border);
-  }
-  .panel-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--c-label);
-    text-transform: uppercase;
-  }
-  .panel-actions {
-    display: flex;
-    gap: 6px;
-  }
-  .panel-action-btn {
-    background: rgba(158, 207, 255, 0.1);
-    border: 1px solid rgba(158, 207, 255, 0.3);
-    border-radius: 4px;
-    color: #9ecfff;
-    font-size: 9px;
-    font-family: var(--f-mono);
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .panel-action-btn:hover {
-    background: rgba(158, 207, 255, 0.2);
-    border-color: rgba(158, 207, 255, 0.6);
-    color: #baddff;
-    box-shadow: 0 0 6px rgba(158, 207, 255, 0.3);
-  }
-  .panel-action-btn:active {
-    transform: translateY(1px);
-    box-shadow: none;
-  }
-  .panel-action-btn.btn-danger {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #ef4444; 
-    box-shadow: 0 0 4px rgba(239, 68, 68, 0.1);
-  }
-  .panel-action-btn.btn-danger:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.6);
-    color: #f87171; 
-    box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
-  }
-
-  .panel-icon-btn {
-    padding: 3px 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 26px;
-    font-size: 15px;
-    line-height: 1;
-  }
-  .panel-icon-btn svg {
-    width: 13px;
-    height: 13px;
-    flex-shrink: 0;
-    display: block;
-  }
-  .panel-icon-btn:disabled {
-    opacity: 0.3;
-    pointer-events: none;
-  }
-  .panel-actions-sep {
-    width: 1px;
-    height: 14px;
-    background: var(--c-border2);
-    margin: 0 2px;
-    flex-shrink: 0;
-    align-self: center;
-  }
-
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(8, 11, 15, 0.85);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .modal-overlay[hidden] {
-    display: none !important;
-  }
-  .modal-box {
-    background: var(--c-panel);
-    border: 1px solid var(--c-border);
-    border-radius: 8px;
-    padding: 24px;
-    width: 340px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  @keyframes modalPop {
-    0% {
-      transform: scale(0.95);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-  .modal-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--c-red);
-    font-family: var(--f-mono);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin: 0;
-  }
-  .modal-desc {
-    color: var(--c-muted);
-    font-size: 13px;
-  }
-  .modal-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .modal-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    background: rgba(158, 207, 255, 0.05);
-    border: 1px solid rgba(158, 207, 255, 0.2);
-    border-radius: 4px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: left;
-  }
-  .modal-btn:hover {
-    background: rgba(158, 207, 255, 0.15);
-    border-color: rgba(158, 207, 255, 0.4);
-  }
-  .mb-title {
-    color: #9ecfff;
-    font-family: var(--f-mono);
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 1px;
-  }
-  .mb-desc {
-    color: var(--c-text);
-    font-size: 12px;
-  }
-  .mb-auto .mb-title {
-    color: var(--c-accent);
-  }
-  .mb-auto {
-    background: rgba(0, 229, 255, 0.05);
-    border-color: rgba(0, 229, 255, 0.2);
-  }
-  .mb-auto:hover {
-    background: rgba(0, 229, 255, 0.15);
-    border-color: rgba(0, 229, 255, 0.4);
-  }
-  .modal-cancel {
-    background: none;
-    border: none;
-    color: var(--c-muted);
-    font-family: var(--f-mono);
-    font-weight: 700;
-    font-size: 10px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    margin-top: 8px;
-    padding: 8px;
-    transition: color 0.2s;
-  }
-  .modal-cancel:hover {
-    color: var(--c-text);
-  }
-
-  #panel-code {
-    display: flex;
-    flex-direction: column;
-    width: 52%;
-    min-width: 300px;
-    border-right: 1px solid var(--c-border);
-    background: var(--c-panel);
-    overflow: hidden;
-  }
-  .editor-area {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    min-height: 0;
-  }
-
-  .line-numbers {
-    width: 44px;
-    flex-shrink: 0;
-    padding: 14px 8px 14px 0;
-    text-align: right;
-    font-family: var(--f-mono);
-    font-size: 13.5px;
-    line-height: 1.75;
-    color: var(--c-label);
-    background: var(--c-base);
-    border-right: 1px solid var(--c-border);
-    overflow: hidden;
-    pointer-events: none;
-    user-select: none;
-    white-space: pre;
-  }
-
-  .sp-code {
-    flex: 1;
-    display: block;
-    padding: 14px 16px;
-    font-family: var(--f-mono);
-    font-size: 13.5px;
-    line-height: 1.75;
-    color: #9ecfff;
-    background: var(--c-panel);
-    border: none;
-    resize: none;
-    outline: none;
-    caret-color: var(--c-accent);
-    tab-size: 2;
-    overflow-y: auto;
-    white-space: pre;
-    word-break: normal;
-    user-select: text;
-  }
-  .sp-code::selection {
-    background: rgba(0, 229, 255, 0.15);
-  }
-
-  .error-console {
-    flex-shrink: 0;
-    max-height: 90px;
-    overflow-y: auto;
-    padding: 8px 10px 8px 16px;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    line-height: 1.5;
-    color: var(--c-red);
-    background: rgba(255, 60, 90, 0.06);
-    border-top: 1px solid rgba(255, 60, 90, 0.3);
-    white-space: pre-wrap;
   }
 
   #panel-right {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  .r-panel {
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid var(--c-border);
-    background: var(--c-panel);
-    overflow: hidden;
-  }
-  #scope-panel {
-    flex: 3;
-  }
-  #spectrum-panel {
-    flex: 2;
-  }
-  #info-panel {
-    flex: 2;
-  }
-  #bottom-panels {
-    flex: 4;
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
-    border-top: 1px solid var(--c-border);
-  }
-  #settings-panel {
-    flex: 1;
-    border-top: none;
-    border-left: none;
-    border-right: 1px solid var(--c-border);
-  }
-  .merged-settings-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px 14px;
-    height: calc(100% - var(--panel-title-h));
-  }
-  .merged-divider {
-    width: 100%;
-    height: 1px;
+    gap: 1px;
     background: var(--c-border);
-    margin: 2px 0;
-  }
-  #levels-panel {
-    flex: 0 0 90px;
-    border-top: none;
-    border-left: none;
-  }
-  #levels-panel .vu-meter-container {
-    height: calc(100% - var(--panel-title-h));
-    border-left: none;
-    padding: 8px 10px;
-    justify-content: center;
+    min-width: 500px;
+    max-width: 800px;
   }
 
-  .scope-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    flex: 1;
-  }
-  .scope-db {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    color: var(--c-accent);
-    letter-spacing: 1px;
-  }
-
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 10px 14px;
-    gap: 8px 12px;
-  }
-  .info-row {
+  #bottom-panels {
+    height: 320px;
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .info-lbl {
-    font-family: var(--f-mono);
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--c-label);
-    text-transform: uppercase;
-  }
-  .info-val {
-    font-family: var(--f-mono);
-    font-size: 12px;
-    color: var(--c-accent);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .info-content-split {
-    display: flex;
-    flex-direction: row;
-    height: calc(100% - var(--panel-title-h));
-    padding: 10px;
-    gap: 16px;
-  }
-  .info-grid {
-    padding: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    justify-content: center;
-  }
-  .vu-meter-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
-    gap: 8px;
-    border-left: 1px solid var(--c-border);
-    padding-left: 16px;
-    min-width: 80px;
-  }
-  .vu-channel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    height: 100%;
-  }
-  .vu-bar {
-    flex: 1;
-    width: 14px;
-    background: #020406;
-    border: 1px solid var(--c-border);
-    border-radius: 2px;
-    position: relative;
-    overflow: hidden;
-  }
-  .vu-fill {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 0%;
-    
-    background: linear-gradient(
-      to top,
-      #00ff88 0%,
-      #00e5ff 60%,
-      #ffd700 85%,
-      #ff3c5a 100%
-    );
-    transition: height 0.05s linear;
-    top: auto;
-  }
-  .vu-lbl {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    color: var(--c-label);
-    font-weight: bold;
-  }
-  .vu-scale {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: calc(100% - 18px); 
-    font-family: var(--f-mono);
-    font-size: 8px;
-    color: var(--c-muted);
-    padding-left: 2px;
-    padding-bottom: 22px;
-  }
-
-  /* ── TEMPO panel ── */
-  #tempo-panel { flex: 2; }
-  .tempo-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  /* ── EDITOR settings panel ── */
-  #editor-settings-panel { flex: 2; }
-  .editor-settings-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px 14px;
-    height: calc(100% - var(--panel-title-h));
-  }
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .setting-lbl {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--c-label);
-    flex-shrink: 0;
-  }
-  .setting-controls {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .setting-btn {
-    font-family: var(--f-mono);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--c-muted);
-    background: var(--c-panel2);
-    border: 1px solid var(--c-border2);
-    border-radius: 3px;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    line-height: 1;
-  }
-  .setting-btn:hover {
-    color: var(--c-text);
-    border-color: var(--c-text);
-  }
-  .setting-btn.setting-active {
-    color: var(--c-text);
-    background: rgba(245,245,245,0.08);
-    border-color: var(--c-text);
-  }
-  .setting-val {
-    font-family: var(--f-mono);
-    font-size: 12px;
-    color: var(--c-text);
-    min-width: 24px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .setting-slider {
-    -webkit-appearance: none;
-    width: 80px;
-    height: 4px;
-    background: var(--c-border2);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-  .setting-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--c-text);
-    cursor: pointer;
-    border: none;
-  }
-  .setting-slider::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--c-text);
-    cursor: pointer;
-    border: none;
-  }
-
-  @keyframes blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.3;
-    }
-  }
-
-  /* ── Toast Notifications ── */
-  .toast-container {
-    position: fixed;
-    top: calc(var(--tb-h) + 10px);
-    right: 14px;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    pointer-events: none;
-  }
-
-  .toast {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: #1a0a0a;
-    border: 1px solid #4a1a1a;
-    border-left: 3px solid #f87171;
-    border-radius: 6px;
-    padding: 10px 14px;
-    max-width: 380px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-    pointer-events: all;
-    animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    line-height: 1.5;
-    color: #f5f5f5;
-  }
-
-  .toast.toast--exit {
-    animation: toastOut 0.2s ease-in forwards;
-  }
-
-  .toast-icon {
-    flex-shrink: 0;
-    color: #f87171;
-    font-size: 14px;
-    line-height: 1.4;
-  }
-
-  .toast-body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .toast-title {
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #f87171;
-    font-size: 10px;
-    margin-bottom: 3px;
-    text-transform: uppercase;
-  }
-
-  .toast-msg {
-    color: #d4d4d4;
-    word-break: break-word;
-    white-space: pre-wrap;
-  }
-
-  .toast-close {
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    color: #737373;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    opacity: 0.7;
-    transition: opacity 0.15s;
-    pointer-events: all;
-  }
-  .toast-close:hover {
-    opacity: 1;
-    color: #f5f5f5;
-  }
-
-  @keyframes toastIn {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes toastOut {
-    from {
-      opacity: 1;
-      transform: translateX(0);
-      max-height: 200px;
-      margin-bottom: 0;
-    }
-    to {
-      opacity: 0;
-      transform: translateX(20px);
-      max-height: 0;
-      margin-bottom: -8px;
-    }
+    gap: 1px;
+    background: var(--c-border);
+    border-top: 1px solid var(--c-border);
   }
 </style>
 
@@ -1466,6 +175,7 @@
   let bpm = 120;
   let isPlaying = false;
   let isAutoRecording = false;
+  let stopTimer = null;
 
   const scopeCtx = scopeCvs.getContext("2d");
   const specCtx = specCvs.getContext("2d");
@@ -1596,13 +306,22 @@
   if (spFontDown) spFontDown.addEventListener("click", () => applyFontSize(fontSize - 1));
   if (spFontUp) spFontUp.addEventListener("click", () => applyFontSize(fontSize + 1));
 
-  // ── Music: Volume & Swing ──
+  // ── Music: Volume & Swing & Master FX ──
   const volSlider = document.getElementById("master-vol");
   const volVal = document.getElementById("vol-val");
+  const panSlider = document.getElementById("master-pan");
+  const panVal = document.getElementById("pan-val");
+  const lowCutSlider = document.getElementById("low-cut");
+  const lowCutVal = document.getElementById("low-cut-val");
+  const highCutSlider = document.getElementById("high-cut");
+  const highCutVal = document.getElementById("high-cut-val");
   const swingSlider = document.getElementById("global-swing");
   const swingVal = document.getElementById("swing-val");
 
   globalThis.globalSwing = 0;
+  globalThis.globalPan = 0;
+  globalThis.globalLowCut = 20;
+  globalThis.globalHighCut = 20000;
 
   function applyVolume(val) {
     const v = parseFloat(val);
@@ -1612,21 +331,61 @@
     }
   }
 
+  function applyPan(val) {
+    const v = parseFloat(val);
+    globalThis.globalPan = v;
+    let text = "C";
+    if (v < 0) text = `L${Math.round(Math.abs(v) * 100)}`;
+    if (v > 0) text = `R${Math.round(v * 100)}`;
+    if (panVal) panVal.textContent = text;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyLowCut(val) {
+    const v = parseInt(val);
+    globalThis.globalLowCut = v;
+    if (lowCutVal) lowCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyHighCut(val) {
+    const v = parseInt(val);
+    globalThis.globalHighCut = v;
+    if (highCutVal) highCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  async function updateMasterEffects() {
+    if (!repl || !isPlaying) return;
+    const code = codeEl.value.trim();
+    if (!code) return;
+    const cleanCode = code.replace(/[;\s]+$/, '');
+    try {
+      await repl.evaluate(`(\n${cleanCode}\n)
+        .pan(globalThis.globalPan || 0)
+        .hp(globalThis.globalLowCut || 20)
+        .lp(globalThis.globalHighCut || 20000)
+        .analyze(1)`);
+    } catch (err) {}
+  }
+
   function applySwing(val) {
     const s = parseFloat(val);
     globalThis.globalSwing = s;
     if (swingVal) swingVal.textContent = `${Math.round(s * 100)}%`;
-    // If the repl is active, we can also inject it into the eval scope
-    if (repl && repl.eval) {
-      // It's already in globalThis, so patterns can just use 'globalSwing'
-    }
   }
 
   if (volSlider) volSlider.addEventListener("input", (e) => applyVolume(e.target.value));
+  if (panSlider) panSlider.addEventListener("input", (e) => applyPan(e.target.value));
+  if (lowCutSlider) lowCutSlider.addEventListener("input", (e) => applyLowCut(e.target.value));
+  if (highCutSlider) highCutSlider.addEventListener("input", (e) => applyHighCut(e.target.value));
   if (swingSlider) swingSlider.addEventListener("input", (e) => applySwing(e.target.value));
 
   // Initialize values
   applyVolume(0.7);
+  applyPan(0);
+  applyLowCut(20);
+  applyHighCut(20000);
   applySwing(0);
 
   // ── Toolbar Settings Pop-up ──
@@ -1736,6 +495,14 @@
     }
     vuL.style.height = `${pct}%`;
     vuR.style.height = `${pct}%`;
+
+    // Dynamic color based on volume
+    let vuColor = "#00e5ff"; // default Cyan
+    if (db > -6) vuColor = "#ff3300"; // Red
+    else if (db > -12) vuColor = "#ffcc00"; // Yellow/Orange
+    
+    vuL.style.background = vuColor;
+    vuR.style.background = vuColor;
 
     const grad = scopeCtx.createLinearGradient(0, 0, SW, 0);
     grad.addColorStop(0, "#0077ff");
@@ -1883,6 +650,8 @@
     const ok = await ensureAudio();
     if (!ok || !repl) return;
 
+    clearTimeout(stopTimer);
+
     btnInit.style.display = "none";
     btnPlay.disabled = true; // grey out PLAY
     btnStop.disabled = false; // enable STOP
@@ -1897,16 +666,50 @@
     try {
       // Strip trailing semicolons so .analyze(1) can be appended safely
       const cleanCode = code.replace(/[;\s]+$/, '');
-      await repl.evaluate(`(\n${cleanCode}\n).analyze(1)`);
+      const isOnce = loopMode.value === 'once';
+      const evalCode = `(\n${cleanCode}\n)
+        .pan(globalThis.globalPan || 0)
+        .hp(globalThis.globalLowCut || 20)
+        .lp(globalThis.globalHighCut || 20000)
+        .analyze(1)`;
+
+      // Apply master effects to the pattern
+      await repl.evaluate(evalCode);
+
+      if (isOnce) {
+        const cycleMs = (240 / bpm) * 1000;
+        stopTimer = setTimeout(() => {
+          stopMusic();
+        }, cycleMs);
+      }
 
       setStatus("playing", "PLAYING");
     } catch (err) {
       console.error("[DAW] evaluate error:", err);
       showError(err);
-      isPlaying = false;
-      btnPlay.classList.remove("is-playing");
-      setStatus("error", "ERROR");
-      startTime = null;
+      stopMusic();
+    }
+  }
+
+  function stopMusic() {
+    if (repl) {
+      try {
+        repl.stop();
+      } catch {}
+    }
+    clearTimeout(stopTimer);
+    clearError();
+    isPlaying = false;
+    btnPlay.classList.remove("is-playing");
+    btnPlay.disabled = false; // re-enable PLAY
+    btnStop.disabled = true; // grey out STOP
+    startTime = null;
+    cycleCount = 0;
+    stopViz();
+    setStatus(ready ? "ready" : "idle", ready ? "READY" : "OFFLINE");
+
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      btnRecVideo.click(); // trigger stop
     }
   }
 
@@ -2046,26 +849,7 @@
     }
   });
 
-  btnStop.addEventListener("click", () => {
-    if (repl) {
-      try {
-        repl.stop();
-      } catch {}
-    }
-    clearError();
-    isPlaying = false;
-    btnPlay.classList.remove("is-playing");
-    btnPlay.disabled = false; // re-enable PLAY
-    btnStop.disabled = true; // grey out STOP
-    startTime = null;
-    cycleCount = 0;
-    stopViz();
-    setStatus(ready ? "ready" : "idle", ready ? "READY" : "OFFLINE");
-
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      btnRecVideo.click(); // trigger stop
-    }
-  });
+  btnStop.addEventListener("click", stopMusic);
 
   requestAnimationFrame(() => {
     drawIdleScope();

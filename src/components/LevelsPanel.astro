@@ -1,0 +1,113 @@
+---
+/**
+ * LevelsPanel Component
+ * VU Meter for L/R channels.
+ */
+---
+<div class="r-panel" id="levels-panel">
+  <div class="panel-titlebar">
+    <span class="panel-title">LEVELS</span>
+  </div>
+  <div class="vu-meter-container">
+    <div class="vu-channel">
+      <div class="vu-bar">
+        <div id="vu-l" class="vu-fill"></div>
+      </div>
+      <span class="vu-lbl">L</span>
+    </div>
+    <div class="vu-channel">
+      <div class="vu-bar">
+        <div id="vu-r" class="vu-fill"></div>
+      </div>
+      <span class="vu-lbl">R</span>
+    </div>
+    <div class="vu-scale">
+      <span>0</span>
+      <span>-6</span>
+      <span>-12</span>
+      <span>-24</span>
+      <span>-48</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  #levels-panel {
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .r-panel {
+    background: var(--c-panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-titlebar {
+    height: var(--panel-title-h);
+    background: var(--c-base);
+    border-bottom: 1px solid var(--c-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .vu-meter-container {
+    flex: 1;
+    display: flex;
+    padding: 10px 8px;
+    gap: 8px;
+    position: relative;
+    background: #0a0a0a;
+  }
+  .vu-channel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .vu-bar {
+    flex: 1;
+    width: 10px;
+    background: #1a1a1a;
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #222;
+  }
+  .vu-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: #00e5ff;
+    transition: height 0.05s ease-out, background 0.1s ease;
+  }
+  .vu-lbl {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--c-label);
+  }
+  .vu-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 7px;
+    color: var(--c-label);
+    padding-bottom: 12px;
+    padding-top: 2px;
+    text-align: right;
+  }
+</style>

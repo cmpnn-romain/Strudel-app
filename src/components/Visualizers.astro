@@ -1,0 +1,87 @@
+---
+/**
+ * Visualizers Component
+ * Contains Oscilloscope and Spectrum canvases.
+ */
+---
+<div class="r-panel" id="scope-panel">
+  <div class="panel-titlebar">
+    <span class="panel-title">
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        width="12"
+        height="12"
+        ><polyline points="0,8 3,5 6,11 9,3 12,8 15,6"></polyline>
+      </svg>
+      OSCILLOSCOPE
+    </span>
+    <span id="scope-db" class="scope-db">— dB</span>
+  </div>
+  <canvas id="sp-visualizer" class="scope-canvas" aria-hidden="true"></canvas>
+</div>
+
+<div class="r-panel" id="spectrum-panel">
+  <div class="panel-titlebar">
+    <span class="panel-title">
+      <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"
+        ><rect x="0" y="8" width="3" height="8"></rect><rect
+          x="4"
+          y="4"
+          width="3"
+          height="12"></rect><rect x="8" y="2" width="3" height="14"
+        ></rect><rect x="12" y="6" width="3" height="10"></rect>
+      </svg>
+      SPECTRUM
+    </span>
+  </div>
+  <canvas id="sp-spectrum" class="scope-canvas" aria-hidden="true"></canvas>
+</div>
+
+<style>
+  #scope-panel {
+    flex: 1;
+  }
+  #spectrum-panel {
+    flex: 1;
+  }
+  .r-panel {
+    background: var(--c-panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-titlebar {
+    height: var(--panel-title-h);
+    background: var(--c-base);
+    border-bottom: 1px solid var(--c-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .scope-db {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--c-muted);
+  }
+  .scope-canvas {
+    flex: 1;
+    width: 100%;
+    background: #0d1117;
+    display: block;
+  }
+</style>

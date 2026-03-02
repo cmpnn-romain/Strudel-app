@@ -1,0 +1,461 @@
+---
+/**
+ * Toolbar Component
+ * Contains transport controls, BPM, Loop, Time, and Status.
+ */
+---
+<header id="daw-toolbar">
+  <div class="tb-brand">
+    <svg class="tb-logo-icon" viewBox="0 0 32 32" fill="none">
+      <circle
+        cx="16"
+        cy="16"
+        r="14"
+        stroke="#ffffff"
+        stroke-width="1.5"
+        opacity="0.6"></circle>
+      <path
+        d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6"
+        stroke="#ffffff"
+        stroke-width="1.5"
+        stroke-linecap="round"></path>
+      <circle cx="16" cy="16" r="2.5" fill="#ffffff"></circle>
+    </svg>
+    <span class="tb-brand-name"
+      >STRUDEL<span class="tb-brand-sub">APP</span>
+    </span>
+  </div>
+
+  <div class="tb-transport">
+    <button
+      id="btn-init"
+      class="tb-btn tb-btn--init"
+      title="Pre-load Audio Engine"
+    >
+      <svg viewBox="0 0 20 20" fill="currentColor"
+        ><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm2 11H8V7h4v6z"></path>
+      </svg>
+      INIT
+    </button>
+
+    <button
+      id="btn-play"
+      class="tb-btn tb-btn--play"
+      title="Play (Ctrl+Enter)"
+      disabled
+    >
+      <svg viewBox="0 0 20 20" fill="currentColor"
+        ><polygon points="4,2 16,10 4,18"></polygon>
+      </svg>
+      <span id="btn-play-label">PLAY</span>
+    </button>
+
+    <button id="btn-stop" class="tb-btn tb-btn--stop" title="Stop" disabled>
+      <svg viewBox="0 0 20 20" fill="currentColor"
+        ><rect x="3" y="3" width="14" height="14" rx="1.5"></rect>
+      </svg>
+      STOP
+    </button>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-bpm-group">
+      <label class="tb-label">BPM</label>
+      <button class="tb-nudge" id="bpm-down">▾</button>
+      <input
+        id="bpm-display"
+        class="tb-bpm-val"
+        type="number"
+        min="20"
+        max="300"
+        value="120"
+        title="BPM — click to edit"
+      />
+      <button class="tb-nudge" id="bpm-up">▴</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-loop-group">
+      <label class="tb-label">LOOP</label>
+      <select id="loop-mode" class="tb-select" title="Playback behavior">
+        <option value="infinite">Infinite</option>
+        <option value="once">Once</option>
+      </select>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <div class="tb-time-group">
+      <span class="tb-label">TIME</span>
+      <span id="tb-time" class="tb-time-val">0:00.000</span>
+      <span class="tb-time-sep">|</span>
+      <span class="tb-label">SR</span>
+      <span id="info-samplerate" class="tb-time-val" style="min-width: unset; font-size: 11px;">–</span>
+    </div>
+  </div>
+
+  <div class="tb-rightmost">
+    <input
+      type="file"
+      id="file-import"
+      accept=".strudel,.txt"
+      style="display: none;"
+    />
+    <div class="tb-action-group">
+      <button
+        id="btn-import-code"
+        class="tb-btn tb-btn--action"
+        title="Import Code">↑ LOAD</button>
+      <button
+        id="btn-dl-code"
+        class="tb-btn tb-btn--action"
+        title="Download Code">↓ SAVE</button>
+      <button
+        id="btn-rec-video"
+        class="tb-btn tb-btn--action"
+        title="Record Video">● REC</button>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-status">
+      <span id="status-dot" class="st-dot st-dot--idle"></span>
+      <span id="status-text" class="st-text">OFFLINE</span>
+    </div>
+    <a href="/info" class="tb-info-btn">INFO</a>
+    <div class="tb-settings-wrap">
+      <button id="btn-settings" class="tb-info-btn" title="Settings">⚙</button>
+      <div id="settings-popup" class="settings-popup">
+        <div class="settings-popup-title">SETTINGS</div>
+        <div class="settings-popup-row">
+          <span class="settings-popup-lbl">FONT SIZE</span>
+          <div class="setting-controls">
+            <button id="sp-font-down" class="setting-btn">−</button>
+            <span id="sp-font-val" class="setting-val">13</span>
+            <button id="sp-font-up" class="setting-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  #daw-toolbar {
+    height: var(--tb-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--c-base);
+    border-bottom: 1px solid var(--c-border);
+    padding: 0 12px;
+  }
+  .tb-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 12px;
+    border-right: 1px solid var(--c-border);
+    flex-shrink: 0;
+  }
+  .tb-logo-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .tb-brand-name {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .tb-brand-sub {
+    color: var(--c-muted);
+    font-weight: 400;
+  }
+  .tb-transport {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  .tb-btn {
+    height: 28px;
+    padding: 0 12px;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    color: var(--c-text);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .tb-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .tb-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .tb-btn:hover:not(:disabled) {
+    background: var(--c-panel2);
+    border-color: var(--c-accent);
+  }
+  .tb-btn--init {
+    color: #ffd700;
+    border-color: rgba(255, 215, 0, 0.3);
+  }
+  .tb-btn--init:hover:not(:disabled) {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+  }
+  .tb-btn--play {
+    color: var(--c-green);
+    border-color: rgba(0, 255, 136, 0.25);
+  }
+  .tb-btn--play:hover:not(:disabled) {
+    background: rgba(0, 255, 136, 0.08);
+    border-color: var(--c-green);
+  }
+  .tb-btn--play.is-playing {
+    background: rgba(0, 255, 136, 0.12);
+    border-color: var(--c-green);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+  }
+  .tb-btn--stop {
+    color: #ff6078;
+    border-color: rgba(255, 96, 120, 0.3);
+  }
+  .tb-btn--stop:hover:not(:disabled) {
+    background: rgba(255, 96, 120, 0.12);
+    border-color: #ff6078;
+    box-shadow: 0 0 8px rgba(255, 96, 120, 0.2);
+  }
+  .tb-btn--stop:not(:disabled) {
+    color: #ffb3bf;
+    border-color: rgba(255, 96, 120, 0.5);
+  }
+  .tb-btn--action {
+    background: transparent;
+    border-color: transparent;
+    color: var(--c-muted);
+    padding: 0 8px;
+  }
+  .tb-btn--action:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--c-text);
+  }
+  .tb-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--c-border);
+    margin: 0 4px;
+  }
+  .tb-bpm-group, .tb-loop-group, .tb-time-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tb-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--c-label);
+    letter-spacing: 1px;
+  }
+  .tb-bpm-val {
+    width: 44px;
+    height: 24px;
+    background: #000;
+    border: 1px solid var(--c-border2);
+    color: var(--c-text);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-align: center;
+    border-radius: 3px;
+    outline: none;
+    cursor: text;
+  }
+  .tb-bpm-val:focus {
+    border-color: var(--c-accent);
+  }
+  .tb-nudge {
+    font-size: 20px;
+    color: #fff;
+    padding: 2px 4px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+  }
+  .tb-nudge:hover {
+    color: #fff;
+    transform: scale(1.2);
+    background: transparent;
+  }
+  .tb-select {
+    background: var(--c-panel);
+    border: 1px solid var(--c-border2);
+    color: var(--c-text);
+    font-family: var(--f-ui);
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  .tb-time-val {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--c-text);
+    min-width: 65px;
+  }
+  .tb-time-sep {
+    color: var(--c-border);
+    font-size: 14px;
+  }
+  .tb-rightmost {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .tb-action-group {
+    display: flex;
+    align-items: center;
+  }
+  .tb-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .st-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .st-dot--idle { background: #555; }
+  .st-dot--ready { background: #ffd700; box-shadow: 0 0 6px #ffd700; }
+  .st-dot--playing { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+  .st-dot--error { background: #ff4444; box-shadow: 0 0 8px #ff4444; }
+  .st-text {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--c-muted);
+  }
+  .tb-info-btn {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--c-muted);
+    border: 1px solid var(--c-border2);
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .tb-info-btn:hover {
+    color: var(--c-text);
+    border-color: var(--c-accent);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .tb-settings-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .settings-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 6px;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 12px;
+    min-width: 140px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  .settings-popup-title {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--c-label);
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--c-border2);
+    padding-bottom: 6px;
+  }
+  .settings-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .settings-popup-lbl {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--c-muted);
+    letter-spacing: 0.5px;
+  }
+  .tb-settings-wrap:hover .settings-popup {
+    display: block;
+  }
+  .tb-settings-wrap::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    display: block;
+  }
+  .setting-btn {
+    width: 24px;
+    height: 24px;
+    background: var(--c-panel2);
+    border: 1px solid var(--c-border2);
+    border-radius: 3px;
+    color: var(--c-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    transition: all 0.1s;
+    cursor: pointer;
+  }
+  .setting-btn:hover:not(:disabled) {
+    border-color: var(--c-accent);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .setting-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .setting-val {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--c-text);
+    min-width: 24px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .setting-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
