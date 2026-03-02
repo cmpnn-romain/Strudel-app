@@ -1,0 +1,1815 @@
+---
+---
+
+<div id="daw-root">
+  
+  <header id="daw-toolbar">
+    <div class="tb-brand">
+      <svg class="tb-logo-icon" viewBox="0 0 32 32" fill="none">
+        <circle
+          cx="16"
+          cy="16"
+          r="14"
+          stroke="#ffffff"
+          stroke-width="1.5"
+          opacity="0.6"></circle>
+        <path
+          d="M10 16c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6"
+          stroke="#ffffff"
+          stroke-width="1.5"
+          stroke-linecap="round"></path>
+        <circle cx="16" cy="16" r="2.5" fill="#ffffff"></circle>
+      </svg>
+      <span class="tb-brand-name"
+        >STRUDEL<span class="tb-brand-sub">APP</span>
+      </span>
+    </div>
+
+    <div class="tb-transport">
+      <button
+        id="btn-init"
+        class="tb-btn tb-btn--init"
+        title="Pre-load Audio Engine"
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor"
+          ><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm2 11H8V7h4v6z"></path>
+        </svg>
+        INIT
+      </button>
+
+      <button
+        id="btn-play"
+        class="tb-btn tb-btn--play"
+        title="Play (Ctrl+Enter)"
+        disabled
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor"
+          ><polygon points="4,2 16,10 4,18"></polygon>
+        </svg>
+        <span id="btn-play-label">PLAY</span>
+      </button>
+
+      <button id="btn-stop" class="tb-btn tb-btn--stop" title="Stop" disabled>
+        <svg viewBox="0 0 20 20" fill="currentColor"
+          ><rect x="3" y="3" width="14" height="14" rx="1.5"></rect>
+        </svg>
+        STOP
+      </button>
+
+      <div class="tb-sep"></div>
+
+      <div class="tb-bpm-group">
+        <label class="tb-label">BPM</label>
+        <button class="tb-nudge" id="bpm-down">▾</button>
+        <input
+          id="bpm-display"
+          class="tb-bpm-val"
+          type="number"
+          min="20"
+          max="300"
+          value="120"
+          title="BPM — click to edit"
+        />
+        <button class="tb-nudge" id="bpm-up">▴</button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <div class="tb-loop-group">
+        <label class="tb-label">LOOP</label>
+        <select id="loop-mode" class="tb-select" title="Playback behavior">
+          <option value="infinite">Infinite</option>
+          <option value="once">Once</option>
+        </select>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <div class="tb-time-group">
+        <span class="tb-label">TIME</span>
+        <span id="tb-time" class="tb-time-val">0:00.000</span>
+      </div>
+    </div>
+
+    <div class="tb-rightmost">
+      <input
+        type="file"
+        id="file-import"
+        accept=".strudel,.txt"
+        style="display: none;"
+      />
+      <div class="tb-action-group">
+        <button
+          id="btn-import-code"
+          class="tb-btn tb-btn--action"
+          title="Import Code">↑ LOAD</button>
+        <button
+          id="btn-dl-code"
+          class="tb-btn tb-btn--action"
+          title="Download Code">↓ SAVE</button>
+        <button
+          id="btn-rec-video"
+          class="tb-btn tb-btn--action"
+          title="Record Video">● REC</button>
+      </div>
+      <div class="tb-sep"></div>
+      <div class="tb-status">
+        <span id="status-dot" class="st-dot st-dot--idle"></span>
+        <span id="status-text" class="st-text">OFFLINE</span>
+      </div>
+      <a href="/info" class="tb-info-btn">INFO</a>
+    </div>
+  </header>
+
+  <div id="daw-main">
+    
+    <aside id="panel-code">
+      <div class="panel-titlebar">
+        <span class="panel-title">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"
+            ><path
+              d="M5.5 2l-4 6 4 6M10.5 2l4 6-4 6"
+              stroke="currentColor"
+              stroke-width="1.5"
+              fill="none"></path>
+          </svg>
+          PATTERN EDITOR
+        </span>
+        <div class="panel-actions">
+          <button
+            id="btn-undo"
+            class="panel-action-btn panel-icon-btn"
+            title="Undo (Ctrl+Z)">↺</button>
+          <button
+            id="btn-redo"
+            class="panel-action-btn panel-icon-btn"
+            title="Redo (Ctrl+Shift+Z)">↻</button>
+          <div class="panel-actions-sep"></div>
+          <button
+            id="btn-clear"
+            class="panel-action-btn btn-danger"
+            title="Clear Code">CLEAR</button
+          >
+        </div>
+      </div>
+
+      <div class="editor-area">
+        <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
+        <textarea
+          id="sp-code"
+          class="sp-code"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          aria-label="Strudel pattern code"></textarea>
+      </div>
+
+      <pre id="sp-error" class="error-console" hidden></pre>
+    </aside>
+
+    <div id="panel-right">
+      <div class="r-panel" id="scope-panel">
+        <div class="panel-titlebar">
+          <span class="panel-title">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              width="12"
+              height="12"
+              ><polyline points="0,8 3,5 6,11 9,3 12,8 15,6"></polyline>
+            </svg>
+            OSCILLOSCOPE
+          </span>
+          <span id="scope-db" class="scope-db">— dB</span>
+        </div>
+        <canvas id="sp-visualizer" class="scope-canvas" aria-hidden="true"
+        ></canvas>
+      </div>
+
+      <div class="r-panel" id="spectrum-panel">
+        <div class="panel-titlebar">
+          <span class="panel-title">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"
+              ><rect x="0" y="8" width="3" height="8"></rect><rect
+                x="4"
+                y="4"
+                width="3"
+                height="12"></rect><rect x="8" y="2" width="3" height="14"
+              ></rect><rect x="12" y="6" width="3" height="10"></rect>
+            </svg>
+            SPECTRUM
+          </span>
+        </div>
+        <canvas id="sp-spectrum" class="scope-canvas" aria-hidden="true"
+        ></canvas>
+      </div>
+
+      <div class="r-panel" id="info-panel">
+        <div class="panel-titlebar">
+          <span class="panel-title">INFO & LEVELS</span>
+        </div>
+        <div class="info-content-split">
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="info-lbl">ENGINE</span><span
+                id="info-engine"
+                class="info-val">–</span
+              >
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">SAMPLE RATE</span><span
+                id="info-samplerate"
+                class="info-val">–</span
+              >
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">CYCLES</span><span
+                id="info-cycles"
+                class="info-val">0</span
+              >
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">PEAK DB</span><span
+                id="info-api"
+                class="info-val">–</span
+              >
+            </div>
+          </div>
+
+          <div class="vu-meter-container">
+            <div class="vu-channel">
+              <div class="vu-bar">
+                <div id="vu-l" class="vu-fill"></div>
+              </div>
+              <span class="vu-lbl">L</span>
+            </div>
+            <div class="vu-channel">
+              <div class="vu-bar">
+                <div id="vu-r" class="vu-fill"></div>
+              </div>
+              <span class="vu-lbl">R</span>
+            </div>
+            
+            <div class="vu-scale">
+              <span>0</span>
+              <span>-6</span>
+              <span>-12</span>
+              <span>-24</span>
+              <span>-48</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="rec-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <h3 class="modal-title">
+        <svg fill="currentColor" width="14" height="14" viewBox="0 0 24 24"
+          ><circle cx="12" cy="12" r="8"></circle>
+        </svg>
+        SELECT RECORDING MODE
+      </h3>
+      <p class="modal-desc">How would you like to record your performance?</p>
+      <div class="modal-actions">
+        <button id="btn-rec-manual" class="modal-btn">
+          <span class="mb-title">MANUAL</span>
+          <span class="mb-desc">Start and stop freely</span>
+        </button>
+        <button id="btn-rec-auto" class="modal-btn mb-auto">
+          <span class="mb-title">AUTO (1 LOOP)</span>
+          <span class="mb-desc">Exactly 1 cycle perfectly trimmed</span>
+        </button>
+      </div>
+      <button id="btn-rec-cancel" class="modal-cancel">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<style>
+  :root {
+    --c-bg: #000000;
+    --c-base: #0a0a0a;
+    --c-panel: #121212;
+    --c-panel2: #1a1a1a;
+    --c-border: #262626;
+    --c-border2: #333333;
+    --c-accent: #ffffff;
+    --c-green: #e5e5e5;
+    --c-red: #737373;
+    --c-text: #f5f5f5;
+    --c-muted: #a3a3a3;
+    --c-label: #737373;
+    --f-mono: "Space Mono", "JetBrains Mono", "Fira Code", monospace;
+    --f-ui: "DM Sans", "Inter", system-ui, sans-serif;
+    --tb-h: 46px;
+    --panel-title-h: 26px;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 229, 255, 0.3) rgba(0, 0, 0, 0.2);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.3);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 255, 0.6);
+  }
+  button {
+    border: none;
+    cursor: pointer;
+    background: none;
+    font-family: var(--f-ui);
+  }
+
+  #daw-root {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--f-ui);
+    font-size: 13px;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #daw-toolbar {
+    height: var(--tb-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--c-base);
+    border-bottom: 1px solid var(--c-border);
+    padding: 0 12px;
+  }
+
+  .tb-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 12px;
+    border-right: 1px solid var(--c-border);
+    flex-shrink: 0;
+  }
+  .tb-logo-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .tb-brand-name {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .tb-brand-sub {
+    color: var(--c-accent);
+    margin-left: 2px;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+
+  .tb-transport {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .tb-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--c-border);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  .tb-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 4px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--c-text);
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    transition: all 0.15s;
+  }
+  .tb-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+  .tb-btn:hover:not(:disabled) {
+    border-color: var(--c-border2);
+    background: var(--c-panel2);
+  }
+  .tb-btn:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(1);
+    cursor: not-allowed;
+  }
+
+  .tb-btn--play {
+    color: var(--c-green);
+    border-color: rgba(0, 255, 136, 0.25);
+  }
+  .tb-btn--play:hover:not(:disabled) {
+    background: rgba(0, 255, 136, 0.08);
+    border-color: var(--c-green);
+  }
+  .tb-btn--play.is-playing {
+    background: rgba(0, 255, 136, 0.12);
+    border-color: var(--c-green);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+  }
+
+  .tb-btn--init {
+    color: #ffd700;
+    border-color: rgba(255, 215, 0, 0.3);
+  }
+  .tb-btn--init:hover:not(:disabled) {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+  }
+
+
+  .tb-btn--stop {
+    color: var(--c-red);
+    border-color: rgba(255, 60, 90, 0.2);
+  }
+  .tb-btn--stop:hover:not(:disabled) {
+    background: rgba(255, 60, 90, 0.08);
+    border-color: var(--c-red);
+  }
+  .tb-btn--stop.is-active {
+    background: rgba(255, 60, 90, 0.08);
+    border-color: var(--c-red);
+  }
+
+  .tb-action-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tb-btn--action {
+    color: var(--c-muted);
+    border-color: var(--c-border);
+  }
+  .tb-btn--action:hover {
+    color: var(--c-text);
+    border-color: var(--c-border2);
+    background: var(--c-panel2);
+  }
+
+  .tb-bpm-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 0 8px;
+    height: 28px;
+  }
+  .tb-label {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--c-label);
+    margin-right: 4px;
+  }
+  .tb-bpm-val {
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--c-accent);
+    min-width: 36px;
+    width: 40px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    cursor: text;
+    -moz-appearance: textfield;
+  }
+  .tb-bpm-val::-webkit-inner-spin-button,
+  .tb-bpm-val::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .tb-bpm-val:focus {
+    outline: 1px solid var(--c-accent);
+    border-radius: 2px;
+  }
+
+  .tb-nudge {
+    font-size: 12px;
+    color: var(--c-muted);
+    padding: 0 2px;
+    border-radius: 2px;
+    transition: color 0.1s;
+    line-height: 1;
+  }
+  .tb-nudge:hover {
+    color: var(--c-accent);
+  }
+
+  .tb-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--c-panel);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d881cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 14px;
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    color: var(--c-accent);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    padding: 2px 22px 2px 6px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .tb-select:hover {
+    border-color: rgba(216, 129, 204, 0.5); 
+  }
+  .tb-select:focus {
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 1px rgba(216, 129, 204, 0.3);
+  }
+
+  .tb-time-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 0 10px;
+    height: 28px;
+  }
+  .tb-time-val {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--c-text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+  }
+
+  .tb-rightmost {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .tb-info-btn {
+    display: flex;
+    align-items: center;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    color: var(--c-accent);
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 0 10px;
+    height: 28px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .tb-info-btn:hover {
+    background: rgba(0, 229, 255, 0.1);
+    border-color: var(--c-accent);
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.3);
+  }
+
+  .tb-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 0 10px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+  .st-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .st-dot--idle {
+    background: var(--c-muted);
+  }
+  .st-dot--ready {
+    background: var(--c-green);
+    box-shadow: 0 0 6px var(--c-green);
+  }
+  .st-dot--playing {
+    background: var(--c-green);
+    box-shadow: 0 0 6px var(--c-green);
+    animation: blink 1.2s infinite;
+  }
+  .st-dot--error {
+    background: var(--c-red);
+    box-shadow: 0 0 6px var(--c-red);
+  }
+  .st-text {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--c-muted);
+    text-transform: uppercase;
+  }
+
+  #daw-main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .panel-titlebar {
+    height: var(--panel-title-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    background: var(--c-base);
+    border-bottom: 1px solid var(--c-border);
+  }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--c-label);
+    text-transform: uppercase;
+  }
+  .panel-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .panel-action-btn {
+    background: rgba(158, 207, 255, 0.1);
+    border: 1px solid rgba(158, 207, 255, 0.3);
+    border-radius: 4px;
+    color: #9ecfff;
+    font-size: 9px;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .panel-action-btn:hover {
+    background: rgba(158, 207, 255, 0.2);
+    border-color: rgba(158, 207, 255, 0.6);
+    color: #baddff;
+    box-shadow: 0 0 6px rgba(158, 207, 255, 0.3);
+  }
+  .panel-action-btn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+  .panel-action-btn.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444; 
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.1);
+  }
+  .panel-action-btn.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #f87171; 
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+  }
+
+  .panel-icon-btn {
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    font-size: 15px;
+    line-height: 1;
+  }
+  .panel-icon-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    display: block;
+  }
+  .panel-icon-btn:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .panel-actions-sep {
+    width: 1px;
+    height: 14px;
+    background: var(--c-border2);
+    margin: 0 2px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 11, 15, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .modal-overlay[hidden] {
+    display: none !important;
+  }
+  .modal-box {
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 8px;
+    padding: 24px;
+    width: 340px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalPop {
+    0% {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--c-red);
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+  .modal-desc {
+    color: var(--c-muted);
+    font-size: 13px;
+  }
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .modal-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    background: rgba(158, 207, 255, 0.05);
+    border: 1px solid rgba(158, 207, 255, 0.2);
+    border-radius: 4px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .modal-btn:hover {
+    background: rgba(158, 207, 255, 0.15);
+    border-color: rgba(158, 207, 255, 0.4);
+  }
+  .mb-title {
+    color: #9ecfff;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .mb-desc {
+    color: var(--c-text);
+    font-size: 12px;
+  }
+  .mb-auto .mb-title {
+    color: var(--c-accent);
+  }
+  .mb-auto {
+    background: rgba(0, 229, 255, 0.05);
+    border-color: rgba(0, 229, 255, 0.2);
+  }
+  .mb-auto:hover {
+    background: rgba(0, 229, 255, 0.15);
+    border-color: rgba(0, 229, 255, 0.4);
+  }
+  .modal-cancel {
+    background: none;
+    border: none;
+    color: var(--c-muted);
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 8px;
+    padding: 8px;
+    transition: color 0.2s;
+  }
+  .modal-cancel:hover {
+    color: var(--c-text);
+  }
+
+  #panel-code {
+    display: flex;
+    flex-direction: column;
+    width: 52%;
+    min-width: 300px;
+    border-right: 1px solid var(--c-border);
+    background: var(--c-panel);
+    overflow: hidden;
+  }
+  .editor-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .line-numbers {
+    width: 44px;
+    flex-shrink: 0;
+    padding: 14px 8px 14px 0;
+    text-align: right;
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--c-label);
+    background: var(--c-base);
+    border-right: 1px solid var(--c-border);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre;
+  }
+
+  .sp-code {
+    flex: 1;
+    display: block;
+    padding: 14px 16px;
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #9ecfff;
+    background: var(--c-panel);
+    border: none;
+    resize: none;
+    outline: none;
+    caret-color: var(--c-accent);
+    tab-size: 2;
+    overflow-y: auto;
+    white-space: pre;
+    word-break: normal;
+    user-select: text;
+  }
+  .sp-code::selection {
+    background: rgba(0, 229, 255, 0.15);
+  }
+
+  .error-console {
+    flex-shrink: 0;
+    max-height: 90px;
+    overflow-y: auto;
+    padding: 8px 10px 8px 16px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--c-red);
+    background: rgba(255, 60, 90, 0.06);
+    border-top: 1px solid rgba(255, 60, 90, 0.3);
+    white-space: pre-wrap;
+  }
+
+  #panel-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .r-panel {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--c-border);
+    background: var(--c-panel);
+    overflow: hidden;
+  }
+  #scope-panel {
+    flex: 3;
+  }
+  #spectrum-panel {
+    flex: 2;
+  }
+  #info-panel {
+    flex: 2;
+  }
+
+  .scope-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
+  .scope-db {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    color: var(--c-accent);
+    letter-spacing: 1px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 14px;
+    gap: 8px 12px;
+  }
+  .info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .info-lbl {
+    font-family: var(--f-mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--c-label);
+    text-transform: uppercase;
+  }
+  .info-val {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--c-accent);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info-content-split {
+    display: flex;
+    flex-direction: row;
+    height: calc(100% - var(--panel-title-h));
+    padding: 10px;
+    gap: 16px;
+  }
+  .info-grid {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+  }
+  .vu-meter-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 8px;
+    border-left: 1px solid var(--c-border);
+    padding-left: 16px;
+    min-width: 80px;
+  }
+  .vu-channel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+  }
+  .vu-bar {
+    flex: 1;
+    width: 14px;
+    background: #020406;
+    border: 1px solid var(--c-border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .vu-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    
+    background: linear-gradient(
+      to top,
+      #00ff88 0%,
+      #00e5ff 60%,
+      #ffd700 85%,
+      #ff3c5a 100%
+    );
+    transition: height 0.05s linear;
+    top: auto;
+  }
+  .vu-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    color: var(--c-label);
+    font-weight: bold;
+  }
+  .vu-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(100% - 18px); 
+    font-family: var(--f-mono);
+    font-size: 8px;
+    color: var(--c-muted);
+    padding-left: 2px;
+    padding-bottom: 22px;
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  /* ── Toast Notifications ── */
+  .toast-container {
+    position: fixed;
+    top: calc(var(--tb-h) + 10px);
+    right: 14px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #1a0a0a;
+    border: 1px solid #4a1a1a;
+    border-left: 3px solid #f87171;
+    border-radius: 6px;
+    padding: 10px 14px;
+    max-width: 380px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    pointer-events: all;
+    animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    color: #f5f5f5;
+  }
+
+  .toast.toast--exit {
+    animation: toastOut 0.2s ease-in forwards;
+  }
+
+  .toast-icon {
+    flex-shrink: 0;
+    color: #f87171;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .toast-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toast-title {
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #f87171;
+    font-size: 10px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+  }
+
+  .toast-msg {
+    color: #d4d4d4;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #737373;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+    pointer-events: all;
+  }
+  .toast-close:hover {
+    opacity: 1;
+    color: #f5f5f5;
+  }
+
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes toastOut {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+      max-height: 200px;
+      margin-bottom: 0;
+    }
+    to {
+      opacity: 0;
+      transform: translateX(20px);
+      max-height: 0;
+      margin-bottom: -8px;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { webaudioRepl } from "@strudel/webaudio";
+  import {
+    getAudioContext,
+    analysers,
+    samples,
+    registerSynthSounds,
+  } from "superdough";
+  import { registerSoundfonts } from "@strudel/soundfonts";
+  import { evalScope } from "@strudel/core";
+  import "@strudel/mini";
+  import "@strudel/tonal";
+  import "@strudel/soundfonts";
+
+  const btnPlay = document.getElementById("btn-play");
+  const btnPlayLbl = document.getElementById("btn-play-label");
+  const btnInit = document.getElementById("btn-init");
+  const btnStop = document.getElementById("btn-stop");
+  const bpmUp = document.getElementById("bpm-up");
+  const bpmDown = document.getElementById("bpm-down");
+  const bpmDisplay = document.getElementById("bpm-display");
+  const loopMode = document.getElementById("loop-mode");
+  const timeEl = document.getElementById("tb-time");
+  const codeEl = document.getElementById("sp-code");
+  const lnEl = document.getElementById("line-numbers");
+  const btnClear = document.getElementById("btn-clear");
+  const btnUndo = document.getElementById("btn-undo");
+  const btnRedo = document.getElementById("btn-redo");
+  const fileImport = document.getElementById("file-import");
+  const btnImportCode = document.getElementById("btn-import-code");
+  const btnDlCode = document.getElementById("btn-dl-code");
+  const btnRecVideo = document.getElementById("btn-rec-video");
+
+  const recModal = document.getElementById("rec-modal");
+  const btnRecManual = document.getElementById("btn-rec-manual");
+  const btnRecAuto = document.getElementById("btn-rec-auto");
+  const btnRecCancel = document.getElementById("btn-rec-cancel");
+
+  const statusDot = document.getElementById("status-dot");
+  const statusText = document.getElementById("status-text");
+  const errorEl = document.getElementById("sp-error");
+  const scopeCvs = document.getElementById("sp-visualizer");
+  const specCvs = document.getElementById("sp-spectrum");
+  const infoEngine = document.getElementById("info-engine");
+  const infoSampleRate = document.getElementById("info-samplerate");
+  const infoCycles = document.getElementById("info-cycles");
+  const infoApi = document.getElementById("info-api");
+  const vuL = document.getElementById("vu-l");
+  const vuR = document.getElementById("vu-r");
+  const scopeDb = document.getElementById("scope-db");
+
+  let repl = null;
+  let ready = false;
+  let animId = null;
+  let startTime = null;
+  let cycleCount = 0;
+  let bpm = 120;
+  let isPlaying = false;
+  let onceTimer = null;
+  let isAutoRecording = false;
+
+  const scopeCtx = scopeCvs.getContext("2d");
+  const specCtx = specCvs.getContext("2d");
+
+  const toastContainer = document.getElementById("toast-container");
+  let toastTimer = null;
+
+  function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerHTML = `
+      <span class="toast-icon">✕</span>
+      <div class="toast-body">
+        <div class="toast-title">Error</div>
+        <div class="toast-msg">${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+      </div>
+      <button class="toast-close" title="Dismiss">✕</button>
+    `;
+
+    const closeBtn = toast.querySelector(".toast-close");
+    function dismissToast() {
+      toast.classList.add("toast--exit");
+      toast.addEventListener("animationend", () => toast.remove(), { once: true });
+    }
+    closeBtn.addEventListener("click", dismissToast);
+
+    toastContainer.appendChild(toast);
+
+    // Auto-dismiss after 6 seconds
+    setTimeout(dismissToast, 6000);
+  }
+
+  function setStatus(state, msg) {
+    statusDot.className = `st-dot st-dot--${state}`;
+    statusText.textContent = msg;
+  }
+  function showError(msg) {
+    const text = String(msg?.message ?? msg);
+    errorEl.textContent = text;
+    errorEl.hidden = false;
+    setStatus("error", "ERROR");
+    showToast(text);
+  }
+  function clearError() {
+    errorEl.hidden = true;
+    errorEl.textContent = "";
+  }
+
+  const STORAGE_KEY = "strudel_saved_code";
+  const DEFAULT_CODE = 's("bd sd hh sd").slow(2)';
+
+  const savedCode = localStorage.getItem(STORAGE_KEY);
+  if (savedCode !== null) {
+    codeEl.value = savedCode;
+  } else {
+    codeEl.value = DEFAULT_CODE;
+  }
+
+  function syncLineNumbers() {
+    const n = codeEl.value.split("\n").length;
+    lnEl.textContent = Array.from({ length: n }, (_, i) => i + 1).join("\n");
+  }
+
+  // ── Undo / Redo history ──
+  const history = [codeEl.value];
+  let historyIndex = 0;
+  let historyTimer = null;
+
+  function updateHistoryButtons() {
+    btnUndo.disabled = historyIndex <= 0;
+    btnRedo.disabled = historyIndex >= history.length - 1;
+  }
+
+  function pushHistory(value) {
+    // Trim any redo branch
+    history.splice(historyIndex + 1);
+    history.push(value);
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+  }
+
+  function applyHistory(index) {
+    historyIndex = Math.max(0, Math.min(history.length - 1, index));
+    codeEl.value = history[historyIndex];
+    syncLineNumbers();
+    localStorage.setItem(STORAGE_KEY, codeEl.value);
+    updateHistoryButtons();
+  }
+
+  codeEl.addEventListener("input", () => {
+    syncLineNumbers();
+    localStorage.setItem(STORAGE_KEY, codeEl.value);
+    // Debounce: snapshot after 600ms of idle typing
+    clearTimeout(historyTimer);
+    historyTimer = setTimeout(() => pushHistory(codeEl.value), 600);
+  });
+  codeEl.addEventListener("scroll", () => {
+    lnEl.scrollTop = codeEl.scrollTop;
+  });
+  syncLineNumbers();
+  updateHistoryButtons();
+
+  btnUndo.addEventListener("click", () => applyHistory(historyIndex - 1));
+  btnRedo.addEventListener("click", () => applyHistory(historyIndex + 1));
+
+  setInterval(() => {
+    if (!startTime) {
+      timeEl.textContent = "0:00.000";
+      return;
+    }
+    const ms = performance.now() - startTime;
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    const ms3 = Math.floor(ms % 1000);
+    timeEl.textContent = `${m}:${String(s).padStart(2, "0")}.${String(
+      ms3
+    ).padStart(3, "0")}`;
+  }, 33);
+
+  function fitCanvas(cvs) {
+    const rect = cvs.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    cvs.width = rect.width * dpr;
+    cvs.height = (rect.height - 26) * dpr; // minus titlebar
+    cvs.style.width = `${rect.width}px`;
+    cvs.style.height = `${rect.height - 26}px`;
+  }
+
+  function drawIdleScope() {
+    fitCanvas(scopeCvs);
+    const W = scopeCvs.width,
+      H = scopeCvs.height;
+    scopeCtx.fillStyle = "#0d1117";
+    scopeCtx.fillRect(0, 0, W, H);
+    scopeCtx.strokeStyle = "rgba(30,42,58,0.7)";
+    scopeCtx.lineWidth = 1;
+    for (let y = 0; y <= 4; y++) {
+      scopeCtx.beginPath();
+      scopeCtx.moveTo(0, (H * y) / 4);
+      scopeCtx.lineTo(W, (H * y) / 4);
+      scopeCtx.stroke();
+    }
+    for (let x = 0; x <= 8; x++) {
+      scopeCtx.beginPath();
+      scopeCtx.moveTo((W * x) / 8, 0);
+      scopeCtx.lineTo((W * x) / 8, H);
+      scopeCtx.stroke();
+    }
+    scopeCtx.strokeStyle = "rgba(0,229,255,0.12)";
+    scopeCtx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
+    scopeCtx.beginPath();
+    scopeCtx.moveTo(0, H / 2);
+    scopeCtx.lineTo(W, H / 2);
+    scopeCtx.stroke();
+  }
+
+  function drawIdleSpec() {
+    fitCanvas(specCvs);
+    specCtx.fillStyle = "#0d1117";
+    specCtx.fillRect(0, 0, specCvs.width, specCvs.height);
+  }
+
+  function drawViz() {
+    animId = requestAnimationFrame(drawViz);
+
+    const wA = analysers[1];
+    if (!wA) return; // not yet connected (first beat hasn't fired)
+
+    fitCanvas(scopeCvs);
+    const SW = scopeCvs.width,
+      SH = scopeCvs.height;
+    const waveBuf = new Uint8Array(wA.frequencyBinCount);
+    wA.getByteTimeDomainData(waveBuf);
+
+    scopeCtx.fillStyle = "#0d1117";
+    scopeCtx.fillRect(0, 0, SW, SH);
+
+    const dpr = window.devicePixelRatio || 1;
+    scopeCtx.strokeStyle = "rgba(30,42,58,0.5)";
+    scopeCtx.lineWidth = 1 * dpr;
+    for (let y = 0; y <= 4; y++) {
+      scopeCtx.beginPath();
+      scopeCtx.moveTo(0, (SH * y) / 4);
+      scopeCtx.lineTo(SW, (SH * y) / 4);
+      scopeCtx.stroke();
+    }
+    for (let x = 0; x <= 8; x++) {
+      scopeCtx.beginPath();
+      scopeCtx.moveTo((SW * x) / 8, 0);
+      scopeCtx.lineTo((SW * x) / 8, SH);
+      scopeCtx.stroke();
+    }
+
+    let peak = 0;
+    for (let i = 0; i < waveBuf.length; i++) {
+      peak = Math.max(peak, Math.abs(waveBuf[i] - 128));
+    }
+    const db = peak === 0 ? -Infinity : 20 * Math.log10(peak / 128);
+    scopeDb.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "— dB";
+
+    let pct = 0;
+    if (isFinite(db) && db > -48) {
+      pct = Math.min(100, Math.max(0, ((db + 48) / 48) * 100));
+    }
+    vuL.style.height = `${pct}%`;
+    vuR.style.height = `${pct}%`;
+
+    const grad = scopeCtx.createLinearGradient(0, 0, SW, 0);
+    grad.addColorStop(0, "#0077ff");
+    grad.addColorStop(0.5, "#00e5ff");
+    grad.addColorStop(1, "#0077ff");
+    scopeCtx.strokeStyle = grad;
+    scopeCtx.lineWidth = 2 * dpr; // Scale thickness for Retina
+    scopeCtx.lineJoin = "round";
+    scopeCtx.lineCap = "round";
+    scopeCtx.shadowColor = "#00e5ff";
+    scopeCtx.shadowBlur = 6 * dpr; // Scale glow for Retina
+    scopeCtx.beginPath();
+
+    let triggerIndex = 0;
+    const searchLimit = Math.floor(waveBuf.length / 2);
+    for (let i = 0; i < searchLimit - 1; i++) {
+      if (waveBuf[i] < 128 && waveBuf[i + 1] >= 128) {
+        triggerIndex = i;
+        break;
+      }
+    }
+
+    const drawLen = searchLimit;
+    const sliceW = SW / drawLen;
+    let x = 0;
+
+    for (let i = 0; i < drawLen; i++) {
+      const idx = triggerIndex + i; // Offset by our zero-crossing anchor
+      const val = idx < waveBuf.length ? waveBuf[idx] : 128;
+
+      const y = ((val / 128) * SH) / 2;
+      i === 0 ? scopeCtx.moveTo(x, y) : scopeCtx.lineTo(x, y);
+      x += sliceW;
+    }
+
+    scopeCtx.stroke();
+    scopeCtx.shadowBlur = 0;
+    cycleCount++;
+    infoCycles.textContent = cycleCount;
+
+    fitCanvas(specCvs);
+    const FW = specCvs.width,
+      FH = specCvs.height;
+    const freqBuf = new Uint8Array(wA.frequencyBinCount);
+    wA.getByteFrequencyData(freqBuf);
+
+    specCtx.fillStyle = "#0d1117";
+    specCtx.fillRect(0, 0, FW, FH);
+
+    const barCount = Math.min(128, Math.floor(FW / 4));
+    const barW = FW / barCount - 1;
+    for (let i = 0; i < barCount; i++) {
+      const v = freqBuf[Math.floor((i * freqBuf.length) / barCount)] / 255;
+      const bH = v * FH;
+      const hue = 180 + v * 60;
+      specCtx.fillStyle = `hsla(${hue},100%,60%,${0.4 + v * 0.6})`;
+      specCtx.fillRect(i * (barW + 1), FH - bH, barW, bH);
+    }
+  }
+
+  function stopViz() {
+    if (animId) {
+      cancelAnimationFrame(animId);
+      animId = null;
+    }
+    drawIdleScope();
+    drawIdleSpec();
+  }
+
+  function applyBpm(value) {
+    bpm = Math.max(20, Math.min(300, Math.round(+value) || bpm));
+    bpmDisplay.value = bpm;
+    if (repl) repl.setCps(bpm / 60 / 4);
+  }
+  function updateBpm(delta) {
+    applyBpm(bpm + delta);
+  }
+  bpmUp.addEventListener("click", () => updateBpm(+1));
+  bpmDown.addEventListener("click", () => updateBpm(-1));
+  bpmDisplay.addEventListener("change", () => applyBpm(bpmDisplay.value));
+  bpmDisplay.addEventListener("blur", () => applyBpm(bpmDisplay.value));
+  bpmDisplay.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyBpm(bpmDisplay.value);
+      bpmDisplay.blur();
+    }
+  });
+
+  async function ensureAudio() {
+    if (ready) return true;
+    setStatus("idle", "LOADING");
+    try {
+      await evalScope(
+        import("@strudel/core"),
+        import("@strudel/mini"),
+        import("@strudel/tonal"),
+        import("@strudel/soundfonts")
+      );
+      globalThis.miniAllStrings(); // ← registers the mini-notation string parser
+
+      samples("github:tidalcycles/Dirt-Samples/master").catch(console.warn);
+
+      registerSynthSounds();
+      registerSoundfonts();
+
+      repl = webaudioRepl();
+      const ctx = getAudioContext() ?? new AudioContext();
+      if (ctx.state === "suspended") await ctx.resume();
+
+      ready = true;
+      infoEngine.textContent = "superdough";
+      infoSampleRate.textContent = `${ctx.sampleRate} Hz`;
+      infoApi.textContent = "Web Audio API";
+      return true;
+    } catch (err) {
+      console.error("[DAW] audio init error:", err);
+      showError(err);
+      return false;
+    }
+  }
+
+  btnInit.addEventListener("click", async () => {
+    btnInit.disabled = true;
+    const ok = await ensureAudio();
+    if (ok) {
+      btnInit.style.display = "none"; // Hide after successful init
+      btnPlay.disabled = false; // Enable PLAY
+    } else {
+      btnInit.disabled = false;
+    }
+  });
+
+  async function play() {
+    clearError();
+    const code = codeEl.value.trim();
+    if (!code) return;
+
+    const ok = await ensureAudio();
+    if (!ok || !repl) return;
+
+    btnInit.style.display = "none";
+    btnPlay.disabled = true; // grey out PLAY
+    btnStop.disabled = false; // enable STOP
+
+    isPlaying = true;
+    btnPlay.classList.add("is-playing");
+    setStatus("playing", "PLAYING");
+    startTime = performance.now();
+
+    if (!animId) drawViz();
+
+    try {
+      await repl.evaluate(code);
+
+      setStatus("playing", "PLAYING");
+
+      const isOnce = loopMode.value === "once";
+      if (isOnce) {
+        const cycleMs = (240 / bpm) * 1000;
+        onceTimer = setTimeout(() => {
+          if (isPlaying) btnStop.click();
+        }, cycleMs);
+      }
+    } catch (err) {
+      console.error("[DAW] evaluate error:", err);
+      showError(err);
+      isPlaying = false;
+      btnPlay.classList.remove("is-playing");
+      setStatus("error", "ERROR");
+      startTime = null;
+    }
+  }
+
+  btnPlay.addEventListener("click", play);
+  btnClear.addEventListener("click", () => {
+    codeEl.value = "";
+    syncLineNumbers();
+    localStorage.removeItem(STORAGE_KEY);
+    codeEl.focus();
+  });
+
+  btnImportCode.addEventListener("click", () => {
+    fileImport.click();
+  });
+
+  fileImport.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const content = ev.target.result;
+      codeEl.value = content;
+      syncLineNumbers();
+      localStorage.setItem(STORAGE_KEY, content);
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  btnDlCode.addEventListener("click", () => {
+    const code = codeEl.value;
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `strudel-pattern-${Date.now()}.strudel`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  let mediaRecorder = null;
+  let recordedChunks = [];
+
+  btnRecVideo.addEventListener("click", () => {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+      btnRecVideo.textContent = "● REC";
+      btnRecVideo.style.color = "";
+      btnRecVideo.style.borderColor = "";
+      isAutoRecording = false;
+      return;
+    }
+
+    if (!ready || !getAudioContext()) {
+      showError(
+        "Please click INIT (or PLAY) first to initialize audio before recording."
+      );
+      return;
+    }
+
+    recModal.hidden = false;
+  });
+
+  btnRecCancel.addEventListener("click", () => {
+    recModal.hidden = true;
+  });
+
+  async function startRecording(type) {
+    recModal.hidden = true; // hide modal
+
+    try {
+      const audioCtx = getAudioContext();
+      const dest = audioCtx.createMediaStreamDestination();
+      const wA = analysers[1]; // We can connect our analyser to the media dest
+      if (wA) {
+        wA.connect(dest);
+      }
+      
+      const canvasStream = scopeCvs.captureStream(60);
+      const audioStream = dest.stream;
+      
+      const tracks = [
+        ...canvasStream.getVideoTracks(),
+        ...audioStream.getAudioTracks()
+      ];
+      const stream = new MediaStream(tracks);
+
+      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+      recordedChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: "video/webm" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `strudel-performance-${Date.now()}.webm`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        stream.getTracks().forEach((track) => track.stop());
+        // Disconnect analyser from recording destination to prevent audio graph leakage
+        try { if (wA) wA.disconnect(dest); } catch {}
+      };
+
+      mediaRecorder.start();
+      btnRecVideo.textContent = "■ STOP REC";
+      btnRecVideo.style.color = "#ef4444";
+      btnRecVideo.style.borderColor = "#ef4444";
+
+      if (type === "auto") {
+        isAutoRecording = true;
+        loopMode.value = "once";
+        play();
+      } else {
+        isAutoRecording = false;
+      }
+    } catch (err) {
+      console.error("Recording failed:", err);
+      showError(
+        "Video export failed. Browser may not support MediaRecorder for WebM."
+      );
+    }
+  }
+
+  btnRecManual.addEventListener("click", () => startRecording("manual"));
+  btnRecAuto.addEventListener("click", () => startRecording("auto"));
+
+  codeEl.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      play();
+    }
+  });
+
+  btnStop.addEventListener("click", () => {
+    if (onceTimer) {
+      clearTimeout(onceTimer);
+      onceTimer = null;
+    }
+
+    if (repl) {
+      try {
+        repl.stop();
+      } catch {}
+    }
+    clearError();
+    isPlaying = false;
+    btnPlay.classList.remove("is-playing");
+    btnPlay.disabled = false; // re-enable PLAY
+    btnStop.disabled = true; // grey out STOP
+    startTime = null;
+    cycleCount = 0;
+    infoCycles.textContent = "0";
+    stopViz();
+    setStatus(ready ? "ready" : "idle", ready ? "READY" : "OFFLINE");
+
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      btnRecVideo.click(); // trigger stop
+    }
+  });
+
+  requestAnimationFrame(() => {
+    drawIdleScope();
+    drawIdleSpec();
+  });
+</script>

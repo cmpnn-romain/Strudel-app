@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+    Developer: Romain Compagnon
+
+# THANKS
+    To all the open-source contributors
+
+# TECHNOLOGY COLOPHON
+    Framework: Astro
+    Fonts: Google Sans (Product Sans)
+    Standards: HTML5, CSS3, ES6+
+    Components: Custom Astro components
+    Build tool: Vite

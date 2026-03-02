@@ -1,0 +1,47 @@
+---
+import StrudelPlayer from "../components/StrudelPlayer.astro";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		
+		<title>Strudel-app</title>
+		<meta
+			name="description"
+			content="A browser-based live-coding music environment powered by Strudel. Type patterns, press Play, make rhythms and melodies."
+		/>
+
+		<link rel="preconnect" href="https://strudel.cc" crossorigin />
+		<link rel="dns-prefetch" href="https://strudel.cc" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body {
+				background: #000000;
+				min-height: 100vh;
+				scroll-behavior: smooth;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<StrudelPlayer />
+	</body>
+</html>
