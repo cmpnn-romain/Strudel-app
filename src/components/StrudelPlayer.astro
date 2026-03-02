@@ -5,6 +5,7 @@ import Visualizers from './Visualizers.astro';
 import MusicSettings from './MusicSettings.astro';
 import LevelsPanel from './LevelsPanel.astro';
 import RecordingModal from './RecordingModal.astro';
+import InfoModal from './InfoModal.astro';
 import ToastContainer from './ToastContainer.astro';
 ---
 
@@ -25,6 +26,7 @@ import ToastContainer from './ToastContainer.astro';
   </main>
 
   <RecordingModal />
+  <InfoModal />
 </div>
 
 <ToastContainer />
@@ -158,6 +160,10 @@ import ToastContainer from './ToastContainer.astro';
   const btnRecManual = document.getElementById("btn-rec-manual");
   const btnRecAuto = document.getElementById("btn-rec-auto");
   const btnRecCancel = document.getElementById("btn-rec-cancel");
+
+  const infoModal = document.getElementById("info-modal");
+  const btnInfo = document.getElementById("btn-info");
+  const btnInfoClose = document.getElementById("btn-info-close");
 
   const statusDot = document.getElementById("status-dot");
   const statusText = document.getElementById("status-text");
@@ -1054,8 +1060,20 @@ import ToastContainer from './ToastContainer.astro';
     }
   }
 
-  btnRecManual.addEventListener("click", () => startRecording("manual"));
-  btnRecAuto.addEventListener("click", () => startRecording("auto"));
+  if (btnRecManual) btnRecManual.addEventListener("click", () => startRecording("manual"));
+  if (btnRecAuto) btnRecAuto.addEventListener("click", () => startRecording("auto"));
+
+  // --- INFO MODAL LOGIC ---
+  if (btnInfo) {
+    btnInfo.addEventListener("click", () => {
+      if (infoModal) infoModal.hidden = false;
+    });
+  }
+  if (btnInfoClose) {
+    btnInfoClose.addEventListener("click", () => {
+      if (infoModal) infoModal.hidden = true;
+    });
+  }
 
   codeEl.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
