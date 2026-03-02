@@ -1495,7 +1495,6 @@
     scopeCtx.stroke();
     scopeCtx.shadowBlur = 0;
     cycleCount++;
-    infoCycles.textContent = cycleCount;
 
     fitCanvas(specCvs);
     const FW = specCvs.width,
@@ -1616,7 +1615,9 @@
     if (!animId) drawViz();
 
     try {
-      await repl.evaluate(code);
+      // Strip trailing semicolons so .analyze(1) can be appended safely
+      const cleanCode = code.replace(/[;\s]+$/, '');
+      await repl.evaluate(`(\n${cleanCode}\n).analyze(1)`);
 
       setStatus("playing", "PLAYING");
 
@@ -1791,7 +1792,6 @@
     btnStop.disabled = true; // grey out STOP
     startTime = null;
     cycleCount = 0;
-    infoCycles.textContent = "0";
     stopViz();
     setStatus(ready ? "ready" : "idle", ready ? "READY" : "OFFLINE");
 
