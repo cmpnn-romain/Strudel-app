@@ -133,13 +133,6 @@
               <button id="sp-font-up" class="setting-btn">+</button>
             </div>
           </div>
-          <div class="settings-popup-row">
-            <span class="settings-popup-lbl">TAB SIZE</span>
-            <div class="setting-controls">
-              <button id="sp-tab-2" class="setting-btn setting-active">2</button>
-              <button id="sp-tab-4" class="setting-btn">4</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1716,19 +1709,6 @@
   
   if (spFontDown) spFontDown.addEventListener("click", () => applyFontSize(fontSize - 1));
   if (spFontUp) spFontUp.addEventListener("click", () => applyFontSize(fontSize + 1));
-
-  // ── Editor: Tab Size (Toolbar Only) ──
-  const spTab2 = document.getElementById("sp-tab-2");
-  const spTab4 = document.getElementById("sp-tab-4");
-
-  function applyTabSize(size) {
-    codeEl.style.tabSize = size;
-    if (spTab2) spTab2.classList.toggle("setting-active", size === 2);
-    if (spTab4) spTab4.classList.toggle("setting-active", size === 4);
-  }
-  
-  if (spTab2) spTab2.addEventListener("click", () => applyTabSize(2));
-  if (spTab4) spTab4.addEventListener("click", () => applyTabSize(4));
 
   // ── Music: Volume & Swing ──
   const volSlider = document.getElementById("master-vol");
