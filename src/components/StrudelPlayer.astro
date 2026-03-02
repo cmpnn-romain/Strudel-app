@@ -228,17 +228,9 @@
       <div id="bottom-panels">
         <div class="r-panel" id="settings-panel">
           <div class="panel-titlebar">
-            <span class="panel-title">BEAT & MUSIC</span>
-            <button id="btn-tap" class="tap-btn" title="Tap to set BPM">TAP</button>
+            <span class="panel-title">MUSIC</span>
           </div>
           <div class="merged-settings-content">
-            <div class="beat-grid">
-              <div class="beat-dot" id="beat-0"></div>
-              <div class="beat-dot" id="beat-1"></div>
-              <div class="beat-dot" id="beat-2"></div>
-              <div class="beat-dot" id="beat-3"></div>
-            </div>
-            <div class="merged-divider"></div>
             <div class="setting-row">
               <span class="setting-lbl">VOLUME</span>
               <div class="setting-controls">
@@ -1209,64 +1201,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    height: calc(100% - var(--panel-title-h));
-    padding: 8px 12px;
-  }
-  .beat-grid {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  .beat-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--c-border2);
-    border: 1px solid var(--c-border2);
-    transition: background 0.05s, box-shadow 0.05s;
-    flex-shrink: 0;
-  }
-  .beat-dot.beat-on {
-    background: var(--c-text);
-    box-shadow: 0 0 8px rgba(245, 245, 245, 0.5);
-  }
-  .beat-dot.beat-accent {
-    width: 18px;
-    height: 18px;
-  }
-  .tap-btn {
-    font-family: var(--f-mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--c-muted);
-    background: var(--c-panel2);
-    border: 1px solid var(--c-border2);
-    border-radius: 3px;
-    padding: 2px 8px;
-    height: 22px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .tap-btn:hover {
-    color: var(--c-text);
-    border-color: var(--c-text);
-  }
-  .tap-btn.tap-active {
-    color: var(--c-text);
-    border-color: var(--c-text);
-    background: rgba(245,245,245,0.07);
-  }
-  .tempo-bpm-hint {
-    font-family: var(--f-mono);
-    font-size: 8px;
-    color: var(--c-label);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
   /* ── EDITOR settings panel ── */
   #editor-settings-panel { flex: 2; }
   .editor-settings-content {
@@ -1492,7 +1426,6 @@
   import "@strudel/soundfonts";
 
   const btnPlay = document.getElementById("btn-play");
-  const btnPlayLbl = document.getElementById("btn-play-label");
   const btnInit = document.getElementById("btn-init");
   const btnStop = document.getElementById("btn-stop");
   const bpmUp = document.getElementById("bpm-up");
@@ -1532,7 +1465,6 @@
   let cycleCount = 0;
   let bpm = 120;
   let isPlaying = false;
-  let onceTimer = null;
   let isAutoRecording = false;
 
   const scopeCtx = scopeCvs.getContext("2d");
@@ -1638,52 +1570,6 @@
 
   btnUndo.addEventListener("click", () => applyHistory(historyIndex - 1));
   btnRedo.addEventListener("click", () => applyHistory(historyIndex + 1));
-
-  // ── Beat Metronome ──
-  const beatDots = [0,1,2,3].map(i => document.getElementById(`beat-${i}`));
-  // Make beat-0 slightly bigger (downbeat accent)
-  beatDots[0].classList.add("beat-accent");
-  let beatIndex = -1;
-  let beatInterval = null;
-
-  function startMetronome() {
-    stopMetronome();
-    const intervalMs = (60 / bpm) * 1000;
-    beatIndex = -1;
-    beatInterval = setInterval(() => {
-      if (beatIndex >= 0) beatDots[beatIndex].classList.remove("beat-on");
-      beatIndex = (beatIndex + 1) % 4;
-      beatDots[beatIndex].classList.add("beat-on");
-    }, intervalMs);
-  }
-  function stopMetronome() {
-    if (beatInterval) { clearInterval(beatInterval); beatInterval = null; }
-    beatDots.forEach(d => d.classList.remove("beat-on"));
-    beatIndex = -1;
-  }
-
-  // ── Tap Tempo ──
-  const btnTap = document.getElementById("btn-tap");
-  let tapTimes = [];
-  let tapResetTimer = null;
-
-  btnTap.addEventListener("click", () => {
-    const now = performance.now();
-    tapTimes.push(now);
-    // Keep only the last 4 taps
-    if (tapTimes.length > 4) tapTimes.shift();
-    btnTap.classList.add("tap-active");
-    clearTimeout(tapResetTimer);
-    tapResetTimer = setTimeout(() => { tapTimes = []; btnTap.classList.remove("tap-active"); }, 2000);
-
-    if (tapTimes.length >= 2) {
-      let totalInterval = 0;
-      for (let i = 1; i < tapTimes.length; i++) totalInterval += tapTimes[i] - tapTimes[i-1];
-      const avgInterval = totalInterval / (tapTimes.length - 1);
-      applyBpm(Math.round(60000 / avgInterval));
-      if (isPlaying) startMetronome();
-    }
-  });
 
   // ── Editor: Font Size (Toolbar Only) ──
   const spFontDown = document.getElementById("sp-font-down");
@@ -1922,7 +1808,6 @@
     bpm = Math.max(20, Math.min(300, Math.round(+value) || bpm));
     bpmDisplay.value = bpm;
     if (repl) repl.setCps(bpm / 60 / 4);
-    if (isPlaying) startMetronome();
   }
   function updateBpm(delta) {
     applyBpm(bpm + delta);
@@ -2015,14 +1900,6 @@
       await repl.evaluate(`(\n${cleanCode}\n).analyze(1)`);
 
       setStatus("playing", "PLAYING");
-
-      const isOnce = loopMode.value === "once";
-      if (isOnce) {
-        const cycleMs = (240 / bpm) * 1000;
-        onceTimer = setTimeout(() => {
-          if (isPlaying) btnStop.click();
-        }, cycleMs);
-      }
     } catch (err) {
       console.error("[DAW] evaluate error:", err);
       showError(err);
@@ -2170,11 +2047,6 @@
   });
 
   btnStop.addEventListener("click", () => {
-    if (onceTimer) {
-      clearTimeout(onceTimer);
-      onceTimer = null;
-    }
-
     if (repl) {
       try {
         repl.stop();
