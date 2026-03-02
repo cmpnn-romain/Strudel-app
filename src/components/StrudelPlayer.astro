@@ -121,6 +121,27 @@
         <span id="status-text" class="st-text">OFFLINE</span>
       </div>
       <a href="/info" class="tb-info-btn">INFO</a>
+      <div class="tb-settings-wrap">
+        <button id="btn-settings" class="tb-info-btn" title="Settings">⚙</button>
+        <div id="settings-popup" class="settings-popup" hidden>
+          <div class="settings-popup-title">SETTINGS</div>
+          <div class="settings-popup-row">
+            <span class="settings-popup-lbl">FONT SIZE</span>
+            <div class="setting-controls">
+              <button id="sp-font-down" class="setting-btn">−</button>
+              <span id="sp-font-val" class="setting-val">13</span>
+              <button id="sp-font-up" class="setting-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-popup-row">
+            <span class="settings-popup-lbl">TAB SIZE</span>
+            <div class="setting-controls">
+              <button id="sp-tab-2" class="setting-btn setting-active">2</button>
+              <button id="sp-tab-4" class="setting-btn">4</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -211,30 +232,62 @@
       </div>
 
 
-      <div class="r-panel" id="levels-panel">
-        <div class="panel-titlebar">
-          <span class="panel-title">LEVELS</span>
+      <div id="bottom-panels">
+        <div class="r-panel" id="settings-panel">
+          <div class="panel-titlebar">
+            <span class="panel-title">BEAT & EDITOR</span>
+            <button id="btn-tap" class="tap-btn" title="Tap to set BPM">TAP</button>
+          </div>
+          <div class="merged-settings-content">
+            <div class="beat-grid">
+              <div class="beat-dot" id="beat-0"></div>
+              <div class="beat-dot" id="beat-1"></div>
+              <div class="beat-dot" id="beat-2"></div>
+              <div class="beat-dot" id="beat-3"></div>
+            </div>
+            <div class="merged-divider"></div>
+            <div class="setting-row">
+              <span class="setting-lbl">FONT</span>
+              <div class="setting-controls">
+                <button id="font-down" class="setting-btn">−</button>
+                <span id="font-size-val" class="setting-val">13</span>
+                <button id="font-up" class="setting-btn">+</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-lbl">TAB</span>
+              <div class="setting-controls">
+                <button id="tab-2" class="setting-btn setting-active" title="2-space indent">2</button>
+                <button id="tab-4" class="setting-btn" title="4-space indent">4</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="vu-meter-container">
-          <div class="vu-channel">
-            <div class="vu-bar">
-              <div id="vu-l" class="vu-fill"></div>
-            </div>
-            <span class="vu-lbl">L</span>
+
+        <div class="r-panel" id="levels-panel">
+          <div class="panel-titlebar">
+            <span class="panel-title">LEVELS</span>
           </div>
-          <div class="vu-channel">
-            <div class="vu-bar">
-              <div id="vu-r" class="vu-fill"></div>
+          <div class="vu-meter-container">
+            <div class="vu-channel">
+              <div class="vu-bar">
+                <div id="vu-l" class="vu-fill"></div>
+              </div>
+              <span class="vu-lbl">L</span>
             </div>
-            <span class="vu-lbl">R</span>
-          </div>
-          
-          <div class="vu-scale">
-            <span>0</span>
-            <span>-6</span>
-            <span>-12</span>
-            <span>-24</span>
-            <span>-48</span>
+            <div class="vu-channel">
+              <div class="vu-bar">
+                <div id="vu-r" class="vu-fill"></div>
+              </div>
+              <span class="vu-lbl">R</span>
+            </div>
+            <div class="vu-scale">
+              <span>0</span>
+              <span>-6</span>
+              <span>-12</span>
+              <span>-24</span>
+              <span>-48</span>
+            </div>
           </div>
         </div>
       </div>
@@ -597,9 +650,48 @@
     transition: all 0.2s ease;
   }
   .tb-info-btn:hover {
-    background: rgba(0, 229, 255, 0.1);
-    border-color: var(--c-accent);
-    box-shadow: 0 0 6px rgba(0, 229, 255, 0.3);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--c-text);
+  }
+  .tb-settings-wrap {
+    position: relative;
+  }
+  .settings-popup {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--c-panel2);
+    border: 1px solid var(--c-border2);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    padding: 12px 14px;
+    min-width: 200px;
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .settings-popup-title {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--c-label);
+    margin-bottom: 2px;
+  }
+  .settings-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .settings-popup-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--c-muted);
+    flex-shrink: 0;
   }
 
   .tb-status {
@@ -949,13 +1041,42 @@
   #info-panel {
     flex: 2;
   }
+  #bottom-panels {
+    flex: 4;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    border-top: 1px solid var(--c-border);
+  }
+  #settings-panel {
+    flex: 1;
+    border-top: none;
+    border-left: none;
+    border-right: 1px solid var(--c-border);
+  }
+  .merged-settings-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+    height: calc(100% - var(--panel-title-h));
+  }
+  .merged-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--c-border);
+    margin: 2px 0;
+  }
   #levels-panel {
-    flex: 2;
+    flex: 0 0 90px;
+    border-top: none;
+    border-left: none;
   }
   #levels-panel .vu-meter-container {
     height: calc(100% - var(--panel-title-h));
     border-left: none;
-    padding: 10px 16px;
+    padding: 8px 10px;
     justify-content: center;
   }
 
@@ -1074,6 +1195,134 @@
     color: var(--c-muted);
     padding-left: 2px;
     padding-bottom: 22px;
+  }
+
+  /* ── TEMPO panel ── */
+  #tempo-panel { flex: 2; }
+  .tempo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: calc(100% - var(--panel-title-h));
+    padding: 8px 12px;
+  }
+  .beat-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .beat-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--c-border2);
+    border: 1px solid var(--c-border2);
+    transition: background 0.05s, box-shadow 0.05s;
+    flex-shrink: 0;
+  }
+  .beat-dot.beat-on {
+    background: var(--c-text);
+    box-shadow: 0 0 8px rgba(245, 245, 245, 0.5);
+  }
+  .beat-dot.beat-accent {
+    width: 18px;
+    height: 18px;
+  }
+  .tap-btn {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--c-muted);
+    background: var(--c-panel2);
+    border: 1px solid var(--c-border2);
+    border-radius: 3px;
+    padding: 2px 8px;
+    height: 22px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tap-btn:hover {
+    color: var(--c-text);
+    border-color: var(--c-text);
+  }
+  .tap-btn.tap-active {
+    color: var(--c-text);
+    border-color: var(--c-text);
+    background: rgba(245,245,245,0.07);
+  }
+  .tempo-bpm-hint {
+    font-family: var(--f-mono);
+    font-size: 8px;
+    color: var(--c-label);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── EDITOR settings panel ── */
+  #editor-settings-panel { flex: 2; }
+  .editor-settings-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 14px;
+    height: calc(100% - var(--panel-title-h));
+  }
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .setting-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--c-label);
+    flex-shrink: 0;
+  }
+  .setting-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .setting-btn {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--c-muted);
+    background: var(--c-panel2);
+    border: 1px solid var(--c-border2);
+    border-radius: 3px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .setting-btn:hover {
+    color: var(--c-text);
+    border-color: var(--c-text);
+  }
+  .setting-btn.setting-active {
+    color: var(--c-text);
+    background: rgba(245,245,245,0.08);
+    border-color: var(--c-text);
+  }
+  .setting-val {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--c-text);
+    min-width: 24px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
   }
 
   @keyframes blink {
@@ -1356,6 +1605,119 @@
   btnUndo.addEventListener("click", () => applyHistory(historyIndex - 1));
   btnRedo.addEventListener("click", () => applyHistory(historyIndex + 1));
 
+  // ── Beat Metronome ──
+  const beatDots = [0,1,2,3].map(i => document.getElementById(`beat-${i}`));
+  // Make beat-0 slightly bigger (downbeat accent)
+  beatDots[0].classList.add("beat-accent");
+  let beatIndex = -1;
+  let beatInterval = null;
+
+  function startMetronome() {
+    stopMetronome();
+    const intervalMs = (60 / bpm) * 1000;
+    beatIndex = -1;
+    beatInterval = setInterval(() => {
+      if (beatIndex >= 0) beatDots[beatIndex].classList.remove("beat-on");
+      beatIndex = (beatIndex + 1) % 4;
+      beatDots[beatIndex].classList.add("beat-on");
+    }, intervalMs);
+  }
+  function stopMetronome() {
+    if (beatInterval) { clearInterval(beatInterval); beatInterval = null; }
+    beatDots.forEach(d => d.classList.remove("beat-on"));
+    beatIndex = -1;
+  }
+
+  // ── Tap Tempo ──
+  const btnTap = document.getElementById("btn-tap");
+  let tapTimes = [];
+  let tapResetTimer = null;
+
+  btnTap.addEventListener("click", () => {
+    const now = performance.now();
+    tapTimes.push(now);
+    // Keep only the last 4 taps
+    if (tapTimes.length > 4) tapTimes.shift();
+    btnTap.classList.add("tap-active");
+    clearTimeout(tapResetTimer);
+    tapResetTimer = setTimeout(() => { tapTimes = []; btnTap.classList.remove("tap-active"); }, 2000);
+
+    if (tapTimes.length >= 2) {
+      let totalInterval = 0;
+      for (let i = 1; i < tapTimes.length; i++) totalInterval += tapTimes[i] - tapTimes[i-1];
+      const avgInterval = totalInterval / (tapTimes.length - 1);
+      applyBpm(Math.round(60000 / avgInterval));
+      if (isPlaying) startMetronome();
+    }
+  });
+
+  // ── Editor: Font Size ──
+  const fontDownBtn = document.getElementById("font-down");
+  const fontUpBtn = document.getElementById("font-up");
+  const fontSizeVal = document.getElementById("font-size-val");
+  const spFontDown = document.getElementById("sp-font-down");
+  const spFontUp = document.getElementById("sp-font-up");
+  const spFontVal = document.getElementById("sp-font-val");
+  
+  let fontSize = 13;
+  const MIN_FONT = 10, MAX_FONT = 22;
+
+  function applyFontSize(size) {
+    fontSize = Math.max(MIN_FONT, Math.min(MAX_FONT, size));
+    const label = fontSize;
+    if (fontSizeVal) fontSizeVal.textContent = label;
+    if (spFontVal) spFontVal.textContent = label;
+    
+    codeEl.style.fontSize = `${fontSize}px`;
+    codeEl.style.lineHeight = "1.75";
+    lnEl.style.fontSize = `${fontSize}px`;
+    
+    const isMin = fontSize <= MIN_FONT;
+    const isMax = fontSize >= MAX_FONT;
+    if (fontDownBtn) fontDownBtn.disabled = isMin;
+    if (fontUpBtn) fontUpBtn.disabled = isMax;
+    if (spFontDown) spFontDown.disabled = isMin;
+    if (spFontUp) spFontUp.disabled = isMax;
+  }
+  
+  if (fontDownBtn) fontDownBtn.addEventListener("click", () => applyFontSize(fontSize - 1));
+  if (fontUpBtn) fontUpBtn.addEventListener("click", () => applyFontSize(fontSize + 1));
+  if (spFontDown) spFontDown.addEventListener("click", () => applyFontSize(fontSize - 1));
+  if (spFontUp) spFontUp.addEventListener("click", () => applyFontSize(fontSize + 1));
+
+  // ── Editor: Tab Size ──
+  const tab2Btn = document.getElementById("tab-2");
+  const tab4Btn = document.getElementById("tab-4");
+  const spTab2 = document.getElementById("sp-tab-2");
+  const spTab4 = document.getElementById("sp-tab-4");
+
+  function applyTabSize(size) {
+    codeEl.style.tabSize = size;
+    if (tab2Btn) tab2Btn.classList.toggle("setting-active", size === 2);
+    if (tab4Btn) tab4Btn.classList.toggle("setting-active", size === 4);
+    if (spTab2) spTab2.classList.toggle("setting-active", size === 2);
+    if (spTab4) spTab4.classList.toggle("setting-active", size === 4);
+  }
+  
+  if (tab2Btn) tab2Btn.addEventListener("click", () => applyTabSize(2));
+  if (tab4Btn) tab4Btn.addEventListener("click", () => applyTabSize(4));
+  if (spTab2) spTab2.addEventListener("click", () => applyTabSize(2));
+  if (spTab4) spTab4.addEventListener("click", () => applyTabSize(4));
+
+  // ── Toolbar Settings Pop-up ──
+  const btnSettings = document.getElementById("btn-settings");
+  const settingsPopup = document.getElementById("settings-popup");
+
+  btnSettings.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsPopup.hidden = !settingsPopup.hidden;
+  });
+  document.addEventListener("click", (e) => {
+    if (!settingsPopup.hidden && !settingsPopup.contains(e.target) && e.target !== btnSettings) {
+      settingsPopup.hidden = true;
+    }
+  });
+
   setInterval(() => {
     if (!startTime) {
       timeEl.textContent = "0:00.000";
@@ -1529,6 +1891,7 @@
     bpm = Math.max(20, Math.min(300, Math.round(+value) || bpm));
     bpmDisplay.value = bpm;
     if (repl) repl.setCps(bpm / 60 / 4);
+    if (isPlaying) startMetronome();
   }
   function updateBpm(delta) {
     applyBpm(bpm + delta);
