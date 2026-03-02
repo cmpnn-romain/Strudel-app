@@ -496,11 +496,10 @@ import ToastContainer from './ToastContainer.astro';
     vuL.style.height = `${pct}%`;
     vuR.style.height = `${pct}%`;
 
-    // Dynamic color based on volume
-    let vuColor = "#00e5ff"; // default Cyan
-    if (db > -6) vuColor = "#ff3300"; // Red
-    else if (db > -12) vuColor = "#ffcc00"; // Yellow/Orange
-    
+    // Dynamic color based on volume (standard audio thresholds)
+    let vuColor = "#2ecc13"; // Green (Normal)
+    if (db > -6) vuColor = "#ff3300"; // Red (Peak/Clip)
+    else if (db > -18) vuColor = "#ffcc00"; // Yellow/Orange (Warning)
     vuL.style.background = vuColor;
     vuR.style.background = vuColor;
 
