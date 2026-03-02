@@ -688,6 +688,7 @@ import ToastContainer from './ToastContainer.astro';
       if (ctx.state === "suspended") await ctx.resume();
 
       ready = true;
+      btnInit.disabled = true;
       infoSampleRate.textContent = `${ctx.sampleRate} Hz`;
 
       // --- STEREO ANALYSER SETUP ---
@@ -736,7 +737,6 @@ import ToastContainer from './ToastContainer.astro';
 
     clearTimeout(stopTimer);
 
-    btnInit.style.display = "none";
     btnPlay.disabled = true; // grey out PLAY
     btnStop.disabled = false; // enable STOP
 
