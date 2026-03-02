@@ -123,7 +123,7 @@
       <a href="/info" class="tb-info-btn">INFO</a>
       <div class="tb-settings-wrap">
         <button id="btn-settings" class="tb-info-btn" title="Settings">⚙</button>
-        <div id="settings-popup" class="settings-popup" hidden>
+        <div id="settings-popup" class="settings-popup">
           <div class="settings-popup-title">SETTINGS</div>
           <div class="settings-popup-row">
             <span class="settings-popup-lbl">FONT SIZE</span>
@@ -657,8 +657,10 @@
     position: relative;
   }
   .settings-popup {
+    display: none;
     position: absolute;
-    top: calc(100% + 6px);
+    top: 100%;
+    margin-top: 6px;
     right: 0;
     background: var(--c-panel2);
     border: 1px solid var(--c-border2);
@@ -667,9 +669,20 @@
     padding: 12px 14px;
     min-width: 200px;
     z-index: 9000;
-    display: flex;
     flex-direction: column;
     gap: 10px;
+  }
+  .tb-settings-wrap:hover .settings-popup {
+    display: flex;
+  }
+  /* Invisible bridge to prevent closing when moving mouse to popup */
+  .settings-popup::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
   }
   .settings-popup-title {
     font-family: var(--f-mono);
@@ -1706,16 +1719,8 @@
 
   // ── Toolbar Settings Pop-up ──
   const btnSettings = document.getElementById("btn-settings");
-  const settingsPopup = document.getElementById("settings-popup");
-
   btnSettings.addEventListener("click", (e) => {
-    e.stopPropagation();
-    settingsPopup.hidden = !settingsPopup.hidden;
-  });
-  document.addEventListener("click", (e) => {
-    if (!settingsPopup.hidden && !settingsPopup.contains(e.target) && e.target !== btnSettings) {
-      settingsPopup.hidden = true;
-    }
+    e.preventDefault();
   });
 
   setInterval(() => {
