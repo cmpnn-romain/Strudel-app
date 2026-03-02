@@ -88,6 +88,9 @@
       <div class="tb-time-group">
         <span class="tb-label">TIME</span>
         <span id="tb-time" class="tb-time-val">0:00.000</span>
+        <span class="tb-time-sep">|</span>
+        <span class="tb-label">SR</span>
+        <span id="info-samplerate" class="tb-time-val" style="min-width: unset; font-size: 11px;">–</span>
       </div>
     </div>
 
@@ -207,59 +210,31 @@
         ></canvas>
       </div>
 
-      <div class="r-panel" id="info-panel">
-        <div class="panel-titlebar">
-          <span class="panel-title">INFO & LEVELS</span>
-        </div>
-        <div class="info-content-split">
-          <div class="info-grid">
-            <div class="info-row">
-              <span class="info-lbl">ENGINE</span><span
-                id="info-engine"
-                class="info-val">–</span
-              >
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">SAMPLE RATE</span><span
-                id="info-samplerate"
-                class="info-val">–</span
-              >
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">CYCLES</span><span
-                id="info-cycles"
-                class="info-val">0</span
-              >
-            </div>
-            <div class="info-row">
-              <span class="info-lbl">PEAK DB</span><span
-                id="info-api"
-                class="info-val">–</span
-              >
-            </div>
-          </div>
 
-          <div class="vu-meter-container">
-            <div class="vu-channel">
-              <div class="vu-bar">
-                <div id="vu-l" class="vu-fill"></div>
-              </div>
-              <span class="vu-lbl">L</span>
+      <div class="r-panel" id="levels-panel">
+        <div class="panel-titlebar">
+          <span class="panel-title">LEVELS</span>
+        </div>
+        <div class="vu-meter-container">
+          <div class="vu-channel">
+            <div class="vu-bar">
+              <div id="vu-l" class="vu-fill"></div>
             </div>
-            <div class="vu-channel">
-              <div class="vu-bar">
-                <div id="vu-r" class="vu-fill"></div>
-              </div>
-              <span class="vu-lbl">R</span>
+            <span class="vu-lbl">L</span>
+          </div>
+          <div class="vu-channel">
+            <div class="vu-bar">
+              <div id="vu-r" class="vu-fill"></div>
             </div>
-            
-            <div class="vu-scale">
-              <span>0</span>
-              <span>-6</span>
-              <span>-12</span>
-              <span>-24</span>
-              <span>-48</span>
-            </div>
+            <span class="vu-lbl">R</span>
+          </div>
+          
+          <div class="vu-scale">
+            <span>0</span>
+            <span>-6</span>
+            <span>-12</span>
+            <span>-24</span>
+            <span>-48</span>
           </div>
         </div>
       </div>
@@ -592,6 +567,11 @@
     color: var(--c-text);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.5px;
+  }
+  .tb-time-sep {
+    color: var(--c-border2);
+    font-size: 11px;
+    margin: 0 4px;
   }
 
   .tb-rightmost {
@@ -969,6 +949,15 @@
   #info-panel {
     flex: 2;
   }
+  #levels-panel {
+    flex: 2;
+  }
+  #levels-panel .vu-meter-container {
+    height: calc(100% - var(--panel-title-h));
+    border-left: none;
+    padding: 10px 16px;
+    justify-content: center;
+  }
 
   .scope-canvas {
     display: block;
@@ -1248,10 +1237,7 @@
   const errorEl = document.getElementById("sp-error");
   const scopeCvs = document.getElementById("sp-visualizer");
   const specCvs = document.getElementById("sp-spectrum");
-  const infoEngine = document.getElementById("info-engine");
   const infoSampleRate = document.getElementById("info-samplerate");
-  const infoCycles = document.getElementById("info-cycles");
-  const infoApi = document.getElementById("info-api");
   const vuL = document.getElementById("vu-l");
   const vuR = document.getElementById("vu-r");
   const scopeDb = document.getElementById("scope-db");
@@ -1577,14 +1563,20 @@
       registerSynthSounds();
       registerSoundfonts();
 
-      repl = webaudioRepl();
+      repl = webaudioRepl({
+        onError: (err) => {
+          showError(err);
+          isPlaying = false;
+          btnPlay.classList.remove("is-playing");
+          setStatus("error", "ERROR");
+          startTime = null;
+        }
+      });
       const ctx = getAudioContext() ?? new AudioContext();
       if (ctx.state === "suspended") await ctx.resume();
 
       ready = true;
-      infoEngine.textContent = "superdough";
       infoSampleRate.textContent = `${ctx.sampleRate} Hz`;
-      infoApi.textContent = "Web Audio API";
       return true;
     } catch (err) {
       console.error("[DAW] audio init error:", err);
