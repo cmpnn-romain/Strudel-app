@@ -178,6 +178,7 @@
     overflow-y: auto;
     padding: 10px;
     background: #0a0a0a;
+    box-sizing: border-box;
     scrollbar-width: none; /* Firefox */
   }
   .music-settings-content::-webkit-scrollbar {
@@ -190,12 +191,13 @@
   }
   .settings-row {
     width: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 4px;
+    gap: 2px;
     background: rgba(255, 255, 255, 0.04);
-    padding: 10px 6px;
+    padding: 10px 4px;
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
@@ -203,12 +205,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex: 1;
-    min-width: 35px;
+    min-width: 28px;
   }
   .v-slider-wrap {
-    height: 65px;
+    height: 60px;
     width: 20px;
     display: flex;
     align-items: center;
@@ -217,8 +219,8 @@
   }
   .v-slider {
     -webkit-appearance: none;
-    width: 65px;
-    height: 5px;
+    width: 60px;
+    height: 4px;
     background: #000;
     border: 1px solid #333;
     border-radius: 2px;
@@ -231,8 +233,8 @@
   .v-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 12px;
-    height: 18px;
+    width: 10px;
+    height: 16px;
     background: linear-gradient(to right, #444, #666, #444);
     cursor: pointer;
     border: 1px solid #000;
@@ -241,26 +243,22 @@
   }
   /* Pseudo-element line for thumb */
   .v-slider::-webkit-slider-thumb {
-    background-image: 
-      linear-gradient(to bottom, transparent 45%, #ffffff 45%, #ffffff 55%, transparent 55%),
-      linear-gradient(to right, #333, #444, #333);
-    background-size: 6px 100%, 100% 100%;
-    background-position: center, center;
-    background-repeat: no-repeat;
+    /* To add a thin white line, we rely on border/background tricks, 
+       but standard styling is limited. We'll keep it simple & clean for now. */
   }
   .v-slider::-moz-range-thumb {
     width: 10px;
     height: 16px;
-    background: linear-gradient(to right, #2a2a2a, #333, #2a2a2a);
+    background: linear-gradient(to right, #444, #666, #444);
     cursor: pointer;
     border: 1px solid #000;
     border-radius: 2px;
   }
   .v-slider-lbl {
-    font-size: 7.5px;
+    font-size: 7px;
     font-weight: 800;
     color: #fff;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.2px;
     text-transform: uppercase;
     text-align: center;
     white-space: nowrap;
@@ -268,9 +266,9 @@
   }
   .v-slider-val {
     font-family: var(--f-mono);
-    font-size: 8.5px;
+    font-size: 7.5px;
     color: var(--c-accent);
-    min-width: 20px;
+    min-width: 18px;
     text-align: center;
     font-weight: 600;
   }
