@@ -498,8 +498,8 @@ import ToastContainer from './ToastContainer.astro';
       else if (db > -48) pct = 0 + ((db + 48) / 24) * 25; // -48 to -24 -> 0 to 25
       else pct = 0;
     }
-    vuL.style.height = `${pct}%`;
-    vuR.style.height = `${pct}%`;
+    vuL.style.clipPath = `inset(${100 - pct}% 0 0 0)`;
+    vuR.style.clipPath = `inset(${100 - pct}% 0 0 0)`;
 
     const grad = scopeCtx.createLinearGradient(0, 0, SW, 0);
     grad.addColorStop(0, "#0077ff");
