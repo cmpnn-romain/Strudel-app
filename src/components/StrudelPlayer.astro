@@ -359,8 +359,9 @@ import ToastContainer from './ToastContainer.astro';
   globalThis.globalWidth = 1;
 
   function applyVolume(val) {
-    const v = parseFloat(val);
-    if (volVal) volVal.textContent = `${Math.round(v * 100)}%`;
+    const rawVal = parseFloat(val);
+    const v = rawVal / 100; // Convert 0-100 to 0.0-1.0
+    if (volVal) volVal.textContent = `${Math.round(rawVal)}%`;
     
     // Direct control of master gain node
     const controller = getSuperdoughAudioController();
