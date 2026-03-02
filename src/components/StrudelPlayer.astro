@@ -419,14 +419,9 @@ import ToastContainer from './ToastContainer.astro';
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
-        .bandq(globalThis.globalQ || 1)
         .room(globalThis.globalRoom || 0)
         .delay(globalThis.globalDelay || 0)
         .detune(globalThis.globalDetune || 0)
-        .shape(globalThis.globalDrive / 100 || 0)
-        .crush(globalThis.globalCrush || 0)
-        .attack(globalThis.globalAttack || 0.005)
-        .release(globalThis.globalRelease || 0.1)
         .analyze(1)`;
 
     const cleanCode = code.replace(/[;\s]+$/, '');
@@ -858,14 +853,9 @@ import ToastContainer from './ToastContainer.astro';
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
-        .bandq(globalThis.globalQ || 1)
         .room(globalThis.globalRoom || 0)
         .delay(globalThis.globalDelay || 0)
         .detune(globalThis.globalDetune || 0)
-        .shape(globalThis.globalDrive / 100 || 0)
-        .crush(globalThis.globalCrush || 0)
-        .attack(globalThis.globalAttack || 0.005)
-        .release(globalThis.globalRelease || 0.1)
         .analyze(1)`;
 
       const evalCode = `(\n${cleanCode}\n)${effects}`;
