@@ -122,11 +122,8 @@ import ToastContainer from './ToastContainer.astro';
 <script>
   // @ts-nocheck
   import { webaudioRepl } from "@strudel/webaudio";
-  import {
-    getAudioContext,
-    analysers,
-    samples,
     registerSynthSounds,
+    getSuperdoughAudioController,
   } from "superdough";
   import { registerSoundfonts } from "@strudel/soundfonts";
   import { evalScope } from "@strudel/core";
@@ -176,6 +173,10 @@ import ToastContainer from './ToastContainer.astro';
   let isPlaying = false;
   let isAutoRecording = false;
   let stopTimer = null;
+  let anaL = null; // Stereo analyser Left
+  let anaR = null; // Stereo analyser Right
+  let dataL = null; // Left channel data
+  let dataR = null; // Right channel data
 
   const scopeCtx = scopeCvs.getContext("2d");
   const specCtx = specCvs.getContext("2d");
@@ -482,24 +483,36 @@ import ToastContainer from './ToastContainer.astro';
       scopeCtx.stroke();
     }
 
-    let peak = 0;
-    for (let i = 0; i < waveBuf.length; i++) {
-      peak = Math.max(peak, Math.abs(waveBuf[i] - 128));
+    // --- STEREO VU CALCULATIONS ---
+    function getPeak(analyser, buf) {
+      if (!analyser || !buf) return -Infinity;
+      analyser.getFloatTimeDomainData(buf);
+      let maxVal = 0;
+      for (let i = 0; i < buf.length; i++) {
+        const abs = Math.abs(buf[i]);
+        if (abs > maxVal) maxVal = abs;
+      }
+      return maxVal > 0 ? 20 * Math.log10(maxVal) : -Infinity;
     }
-    const db = peak === 0 ? -Infinity : 20 * Math.log10(peak / 128);
+
+    function getPct(dbValue) {
+      if (!isFinite(dbValue)) return 0;
+      if (dbValue > 0) return 100;
+      if (dbValue > -6) return 75 + ((dbValue + 6) / 6) * 25;
+      if (dbValue > -12) return 50 + ((dbValue + 12) / 6) * 25;
+      if (dbValue > -24) return 25 + ((dbValue + 24) / 12) * 25;
+      if (dbValue > -48) return 0 + ((dbValue + 48) / 24) * 25;
+      return 0;
+    }
+
+    const dbL = getPeak(anaL, dataL);
+    const dbR = getPeak(anaR, dataR);
+    const db = Math.max(dbL, dbR);
+
     scopeDb.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "— dB";
 
-    let pct = 0;
-    if (isFinite(db)) {
-      if (db > 0) pct = 100;
-      else if (db > -6) pct = 75 + ((db + 6) / 6) * 25; // -6 to 0 -> 75 to 100
-      else if (db > -12) pct = 50 + ((db + 12) / 6) * 25; // -12 to -6 -> 50 to 75
-      else if (db > -24) pct = 25 + ((db + 24) / 12) * 25; // -24 to -12 -> 25 to 50
-      else if (db > -48) pct = 0 + ((db + 48) / 24) * 25; // -48 to -24 -> 0 to 25
-      else pct = 0;
-    }
-    vuL.style.clipPath = `inset(${100 - pct}% 0 0 0)`;
-    vuR.style.clipPath = `inset(${100 - pct}% 0 0 0)`;
+    vuL.style.clipPath = `inset(${100 - getPct(dbL)}% 0 0 0)`;
+    vuR.style.clipPath = `inset(${100 - getPct(dbR)}% 0 0 0)`;
 
     const grad = scopeCtx.createLinearGradient(0, 0, SW, 0);
     grad.addColorStop(0, "#0077ff");
@@ -620,6 +633,24 @@ import ToastContainer from './ToastContainer.astro';
 
       ready = true;
       infoSampleRate.textContent = `${ctx.sampleRate} Hz`;
+
+      // --- STEREO ANALYSER SETUP ---
+      const controller = getSuperdoughAudioController();
+      const splitter = ctx.createChannelSplitter(2);
+      // Connect master destinationGain to our splitter
+      // This allows us to see the final output post-volume/master effects
+      controller.output.destinationGain.connect(splitter);
+
+      anaL = ctx.createAnalyser();
+      anaR = ctx.createAnalyser();
+      anaL.fftSize = 1024;
+      anaR.fftSize = 1024;
+      dataL = new Float32Array(anaL.fftSize);
+      dataR = new Float32Array(anaR.fftSize);
+
+      splitter.connect(anaL, 0); // Left
+      splitter.connect(anaR, 1); // Right
+
       return true;
     } catch (err) {
       console.error("[DAW] audio init error:", err);
