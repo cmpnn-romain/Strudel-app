@@ -1,6 +1,6 @@
 {
-    "name": "Strudel App",
-    "short_name": "Strudel",
+    "name": "Strudel-app",
+    "short_name": "Strudel-app",
     "description": "Live coding music environment",
     "start_url": "/",
     "display": "standalone",
