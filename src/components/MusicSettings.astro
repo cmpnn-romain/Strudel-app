@@ -47,6 +47,32 @@
 
     <div class="v-slider-group">
       <div class="v-slider-wrap">
+        <input type="range" id="master-room" min="0" max="1" step="0.01" value="0.1" class="v-slider" />
+      </div>
+      <span class="v-slider-lbl">ROOM</span>
+      <span id="room-val" class="v-slider-val">10%</span>
+    </div>
+
+    <div class="v-slider-group">
+      <div class="v-slider-wrap">
+        <input type="range" id="master-delay" min="0" max="1" step="0.01" value="0" class="v-slider" />
+      </div>
+      <span class="v-slider-lbl">DELAY</span>
+      <span id="delay-val" class="v-slider-val">0%</span>
+    </div>
+
+    <div class="v-slider-group">
+      <div class="v-slider-wrap">
+        <input type="range" id="master-detune" min="-1200" max="1200" step="1" value="0" class="v-slider" />
+      </div>
+      <span class="v-slider-lbl">DETUNE</span>
+      <span id="detune-val" class="v-slider-val">0c</span>
+    </div>
+
+    <div class="v-slider-sep"></div>
+
+    <div class="v-slider-group">
+      <div class="v-slider-wrap">
         <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="v-slider" />
       </div>
       <span class="v-slider-lbl">SWING</span>
@@ -89,9 +115,9 @@
     flex: 1;
     display: flex;
     align-items: flex-end;
-    justify-content: space-around;
-    padding: 15px 10px;
-    gap: 4px;
+    justify-content: space-between;
+    padding: 12px 6px;
+    gap: 2px;
   }
   .v-slider-group {
     display: flex;

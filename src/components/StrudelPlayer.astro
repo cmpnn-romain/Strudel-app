@@ -323,10 +323,20 @@ import ToastContainer from './ToastContainer.astro';
   const swingSlider = document.getElementById("global-swing");
   const swingVal = document.getElementById("swing-val");
 
+  const roomSlider = document.getElementById("master-room");
+  const roomVal = document.getElementById("room-val");
+  const delaySlider = document.getElementById("master-delay");
+  const delayVal = document.getElementById("delay-val");
+  const detuneSlider = document.getElementById("master-detune");
+  const detuneVal = document.getElementById("detune-val");
+
   globalThis.globalSwing = 0;
   globalThis.globalPan = 0;
   globalThis.globalLowCut = 20;
   globalThis.globalHighCut = 20000;
+  globalThis.globalRoom = 0.1;
+  globalThis.globalDelay = 0;
+  globalThis.globalDetune = 0;
 
   function applyVolume(val) {
     const v = parseFloat(val);
@@ -381,6 +391,9 @@ import ToastContainer from './ToastContainer.astro';
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
+        .room(globalThis.globalRoom || 0)
+        .delay(globalThis.globalDelay || 0)
+        .detune(globalThis.globalDetune || 0)
         .analyze(1)`);
     } catch (err) {}
   }
@@ -391,11 +404,35 @@ import ToastContainer from './ToastContainer.astro';
     if (swingVal) swingVal.textContent = `${Math.round(s * 100)}%`;
   }
 
+  function applyRoom(val) {
+    const v = parseFloat(val);
+    globalThis.globalRoom = v;
+    if (roomVal) roomVal.textContent = `${Math.round(v * 100)}%`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyDelay(val) {
+    const v = parseFloat(val);
+    globalThis.globalDelay = v;
+    if (delayVal) delayVal.textContent = `${Math.round(v * 100)}%`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyDetune(val) {
+    const v = parseInt(val);
+    globalThis.globalDetune = v;
+    if (detuneVal) detuneVal.textContent = `${v}c`;
+    if (isPlaying) updateMasterEffects();
+  }
+
   if (volSlider) volSlider.addEventListener("input", (e) => applyVolume(e.target.value));
   if (panSlider) panSlider.addEventListener("input", (e) => applyPan(e.target.value));
   if (lowCutSlider) lowCutSlider.addEventListener("input", (e) => applyLowCut(e.target.value));
   if (highCutSlider) highCutSlider.addEventListener("input", (e) => applyHighCut(e.target.value));
   if (swingSlider) swingSlider.addEventListener("input", (e) => applySwing(e.target.value));
+  if (roomSlider) roomSlider.addEventListener("input", (e) => applyRoom(e.target.value));
+  if (delaySlider) delaySlider.addEventListener("input", (e) => applyDelay(e.target.value));
+  if (detuneSlider) detuneSlider.addEventListener("input", (e) => applyDetune(e.target.value));
 
   // Initialize values
   applyVolume(0.7);
@@ -403,6 +440,9 @@ import ToastContainer from './ToastContainer.astro';
   applyLowCut(20);
   applyHighCut(20000);
   applySwing(0);
+  applyRoom(0.1);
+  applyDelay(0);
+  applyDetune(0);
 
   // ── Toolbar Settings Pop-up ──
   const btnSettings = document.getElementById("btn-settings");
@@ -714,6 +754,9 @@ import ToastContainer from './ToastContainer.astro';
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
         .lp(globalThis.globalHighCut || 20000)
+        .room(globalThis.globalRoom || 0)
+        .delay(globalThis.globalDelay || 0)
+        .detune(globalThis.globalDetune || 0)
         .analyze(1)`;
 
       // Apply master effects to the pattern
