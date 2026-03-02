@@ -493,16 +493,17 @@
 
 
   .tb-btn--stop {
-    color: var(--c-red);
-    border-color: rgba(255, 60, 90, 0.2);
+    color: #ff6078;
+    border-color: rgba(255, 96, 120, 0.3);
   }
   .tb-btn--stop:hover:not(:disabled) {
-    background: rgba(255, 60, 90, 0.08);
-    border-color: var(--c-red);
+    background: rgba(255, 96, 120, 0.12);
+    border-color: #ff6078;
+    box-shadow: 0 0 8px rgba(255, 96, 120, 0.2);
   }
-  .tb-btn--stop.is-active {
-    background: rgba(255, 60, 90, 0.08);
-    border-color: var(--c-red);
+  .tb-btn--stop:not(:disabled) {
+    color: #ffb3bf;
+    border-color: rgba(255, 96, 120, 0.5);
   }
 
   .tb-action-group {
