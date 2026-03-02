@@ -122,6 +122,10 @@ import ToastContainer from './ToastContainer.astro';
 <script>
   // @ts-nocheck
   import { webaudioRepl } from "@strudel/webaudio";
+  import {
+    getAudioContext,
+    analysers,
+    samples,
     registerSynthSounds,
     getSuperdoughAudioController,
   } from "superdough";
