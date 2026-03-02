@@ -138,6 +138,7 @@ import ToastContainer from './ToastContainer.astro';
   const btnPlay = document.getElementById("btn-play");
   const btnInit = document.getElementById("btn-init");
   const btnStop = document.getElementById("btn-stop");
+  const btnUpdate = document.getElementById("btn-update");
   const bpmUp = document.getElementById("bpm-up");
   const bpmDown = document.getElementById("bpm-down");
   const bpmDisplay = document.getElementById("bpm-display");
@@ -741,6 +742,7 @@ import ToastContainer from './ToastContainer.astro';
 
     isPlaying = true;
     btnPlay.classList.add("is-playing");
+    btnUpdate.disabled = false; // enable UPDATE
     setStatus("playing", "PLAYING");
     startTime = performance.now();
 
@@ -789,6 +791,7 @@ import ToastContainer from './ToastContainer.astro';
     btnPlay.classList.remove("is-playing");
     btnPlay.disabled = false; // re-enable PLAY
     btnStop.disabled = true; // grey out STOP
+    btnUpdate.disabled = true; // grey out UPDATE
     startTime = null;
     cycleCount = 0;
     stopViz();
@@ -800,6 +803,32 @@ import ToastContainer from './ToastContainer.astro';
   }
 
   btnPlay.addEventListener("click", play);
+
+  btnUpdate.addEventListener("click", async () => {
+    clearError();
+    const code = codeEl.value.trim();
+    if (!code || !repl || !isPlaying) return;
+
+    try {
+      const cleanCode = code.replace(/[;\s]+$/, '');
+      const evalCode = `(\n${cleanCode}\n)
+        .pan(globalThis.globalPan || 0)
+        .hp(globalThis.globalLowCut || 20)
+        .lp(globalThis.globalHighCut || 20000)
+        .room(globalThis.globalRoom || 0)
+        .delay(globalThis.globalDelay || 0)
+        .detune(globalThis.globalDetune || 0)
+        .analyze(1)`;
+
+      await repl.evaluate(evalCode);
+      // feedback animation
+      btnUpdate.style.transform = "scale(0.95)";
+      setTimeout(() => btnUpdate.style.transform = "", 100);
+    } catch (err) {
+      console.error("[DAW] update error:", err);
+      showError(err);
+    }
+  });
   btnClear.addEventListener("click", () => {
     codeEl.value = "";
     syncLineNumbers();

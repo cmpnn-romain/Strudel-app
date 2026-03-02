@@ -57,6 +57,13 @@
       STOP
     </button>
 
+    <button id="btn-update" class="tb-btn tb-btn--update" title="Update Live (Refresh patterns)" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+      </svg>
+      UPDATE
+    </button>
+
     <div class="tb-sep"></div>
 
     <div class="tb-bpm-group">
@@ -242,6 +249,19 @@
   .tb-btn--stop:not(:disabled) {
     color: #ffb3bf;
     border-color: rgba(255, 96, 120, 0.5);
+  }
+  .tb-btn--update {
+    color: #ff9d00;
+    border-color: rgba(255, 157, 0, 0.3);
+  }
+  .tb-btn--update:hover:not(:disabled) {
+    background: rgba(255, 157, 0, 0.12);
+    border-color: #ff9d00;
+    box-shadow: 0 0 8px rgba(255, 157, 0, 0.2);
+  }
+  .tb-btn--update:not(:disabled) {
+    color: #ffcc80;
+    border-color: rgba(255, 157, 0, 0.5);
   }
   .tb-btn--action {
     background: transparent;
