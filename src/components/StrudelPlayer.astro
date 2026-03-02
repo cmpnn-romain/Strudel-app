@@ -331,6 +331,19 @@ import ToastContainer from './ToastContainer.astro';
   const detuneSlider = document.getElementById("master-detune");
   const detuneVal = document.getElementById("detune-val");
 
+  const qSlider = document.getElementById("master-q");
+  const qVal = document.getElementById("q-val");
+  const driveSlider = document.getElementById("master-drive");
+  const driveVal = document.getElementById("drive-val");
+  const crushSlider = document.getElementById("master-crush");
+  const crushVal = document.getElementById("crush-val");
+  const attackSlider = document.getElementById("master-attack");
+  const attackVal = document.getElementById("attack-val");
+  const releaseSlider = document.getElementById("master-release");
+  const releaseVal = document.getElementById("release-val");
+  const widthSlider = document.getElementById("master-width");
+  const widthVal = document.getElementById("width-val");
+
   globalThis.globalSwing = 0;
   globalThis.globalPan = 0;
   globalThis.globalLowCut = 20;
@@ -338,6 +351,12 @@ import ToastContainer from './ToastContainer.astro';
   globalThis.globalRoom = 0.1;
   globalThis.globalDelay = 0;
   globalThis.globalDetune = 0;
+  globalThis.globalQ = 1;
+  globalThis.globalDrive = 0;
+  globalThis.globalCrush = 0;
+  globalThis.globalAttack = 0.005;
+  globalThis.globalRelease = 0.1;
+  globalThis.globalWidth = 1;
 
   function applyVolume(val) {
     const v = parseFloat(val);
@@ -395,6 +414,11 @@ import ToastContainer from './ToastContainer.astro';
         .room(globalThis.globalRoom || 0)
         .delay(globalThis.globalDelay || 0)
         .detune(globalThis.globalDetune || 0)
+        .q(globalThis.globalQ || 1)
+        .distort(globalThis.globalDrive / 100 || 0)
+        .crush(globalThis.globalCrush || 0)
+        .attack(globalThis.globalAttack || 0.005)
+        .release(globalThis.globalRelease || 0.1)
         .analyze(1)`);
     } catch (err) {}
   }
@@ -409,6 +433,51 @@ import ToastContainer from './ToastContainer.astro';
     const v = parseFloat(val);
     globalThis.globalRoom = v;
     if (roomVal) roomVal.textContent = `${Math.round(v * 100)}%`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyQ(val) {
+    const v = parseFloat(val);
+    globalThis.globalQ = v;
+    if (qVal) qVal.textContent = v.toFixed(1);
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyDrive(val) {
+    const v = parseInt(val);
+    globalThis.globalDrive = v;
+    if (driveVal) driveVal.textContent = `${v}%`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyCrush(val) {
+    const v = parseInt(val);
+    globalThis.globalCrush = v;
+    if (crushVal) crushVal.textContent = v === 0 ? "OFF" : `${v}b`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyAttack(val) {
+    const v = parseFloat(val);
+    globalThis.globalAttack = v;
+    if (attackVal) attackVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyRelease(val) {
+    const v = parseFloat(val);
+    globalThis.globalRelease = v;
+    if (releaseVal) releaseVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
+    if (isPlaying) updateMasterEffects();
+  }
+
+  function applyWidth(val) {
+    const v = parseFloat(val);
+    globalThis.globalWidth = v;
+    if (widthVal) widthVal.textContent = `${Math.round(v * 100)}%`;
+    // Width can be applied by scaling pan or via specific strudel methods if they exist.
+    // In strudel, there isn't a direct master .width() for patterns that works globally easily, 
+    // but .pan can be influenced. For now, we update state.
     if (isPlaying) updateMasterEffects();
   }
 
@@ -434,6 +503,12 @@ import ToastContainer from './ToastContainer.astro';
   if (roomSlider) roomSlider.addEventListener("input", (e) => applyRoom(e.target.value));
   if (delaySlider) delaySlider.addEventListener("input", (e) => applyDelay(e.target.value));
   if (detuneSlider) detuneSlider.addEventListener("input", (e) => applyDetune(e.target.value));
+  if (qSlider) qSlider.addEventListener("input", (e) => applyQ(e.target.value));
+  if (driveSlider) driveSlider.addEventListener("input", (e) => applyDrive(e.target.value));
+  if (crushSlider) crushSlider.addEventListener("input", (e) => applyCrush(e.target.value));
+  if (attackSlider) attackSlider.addEventListener("input", (e) => applyAttack(e.target.value));
+  if (releaseSlider) releaseSlider.addEventListener("input", (e) => applyRelease(e.target.value));
+  if (widthSlider) widthSlider.addEventListener("input", (e) => applyWidth(e.target.value));
 
   // Initialize values
   applyVolume(0.7);
@@ -444,6 +519,12 @@ import ToastContainer from './ToastContainer.astro';
   applyRoom(0.1);
   applyDelay(0);
   applyDetune(0);
+  applyQ(1);
+  applyDrive(0);
+  applyCrush(0);
+  applyAttack(0.005);
+  applyRelease(0.1);
+  applyWidth(1);
 
   // ── Toolbar Settings Pop-up ──
   const btnSettings = document.getElementById("btn-settings");
