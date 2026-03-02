@@ -633,6 +633,12 @@ import ToastContainer from './ToastContainer.astro';
       cancelAnimationFrame(animId);
       animId = null;
     }
+    
+    // Reset VU meters to neutral
+    if (vuL) vuL.style.clipPath = "inset(100% 0 0 0)";
+    if (vuR) vuR.style.clipPath = "inset(100% 0 0 0)";
+    if (scopeDb) scopeDb.textContent = "— dB";
+
     drawIdleScope();
     drawIdleSpec();
   }
@@ -720,7 +726,7 @@ import ToastContainer from './ToastContainer.astro';
     btnInit.disabled = true;
     const ok = await ensureAudio();
     if (ok) {
-      btnInit.style.display = "none"; // Hide after successful init
+      btnInit.disabled = true; // Disable after successful init
       btnPlay.disabled = false; // Enable PLAY
     } else {
       btnInit.disabled = false;
