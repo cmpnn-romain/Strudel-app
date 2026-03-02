@@ -393,7 +393,9 @@ import ToastContainer from './ToastContainer.astro';
     if (lowCutVal) lowCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
     if (isPlaying) debouncedUpdateEffects();
   }
-
+  function applyHighCut(val) {
+    const v = parseInt(val);
+    globalThis.globalHighCut = v;
     if (highCutVal) highCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
     if (isPlaying) debouncedUpdateEffects();
   }
