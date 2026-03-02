@@ -235,7 +235,7 @@
       <div id="bottom-panels">
         <div class="r-panel" id="settings-panel">
           <div class="panel-titlebar">
-            <span class="panel-title">BEAT & EDITOR</span>
+            <span class="panel-title">BEAT & MUSIC</span>
             <button id="btn-tap" class="tap-btn" title="Tap to set BPM">TAP</button>
           </div>
           <div class="merged-settings-content">
@@ -247,18 +247,17 @@
             </div>
             <div class="merged-divider"></div>
             <div class="setting-row">
-              <span class="setting-lbl">FONT</span>
+              <span class="setting-lbl">VOLUME</span>
               <div class="setting-controls">
-                <button id="font-down" class="setting-btn">−</button>
-                <span id="font-size-val" class="setting-val">13</span>
-                <button id="font-up" class="setting-btn">+</button>
+                <input type="range" id="master-vol" min="0" max="1" step="0.01" value="0.7" class="setting-slider" />
+                <span id="vol-val" class="setting-val">70%</span>
               </div>
             </div>
             <div class="setting-row">
-              <span class="setting-lbl">TAB</span>
+              <span class="setting-lbl">SWING</span>
               <div class="setting-controls">
-                <button id="tab-2" class="setting-btn setting-active" title="2-space indent">2</button>
-                <button id="tab-4" class="setting-btn" title="4-space indent">4</button>
+                <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="setting-slider" />
+                <span id="swing-val" class="setting-val">0%</span>
               </div>
             </div>
           </div>
@@ -1338,6 +1337,34 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .setting-slider {
+    -webkit-appearance: none;
+    width: 80px;
+    height: 4px;
+    background: var(--c-border2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .setting-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--c-text);
+    cursor: pointer;
+    border: none;
+  }
+  .setting-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--c-text);
+    cursor: pointer;
+    border: none;
+  }
+
   @keyframes blink {
     0%,
     100% {
@@ -1664,10 +1691,7 @@
     }
   });
 
-  // ── Editor: Font Size ──
-  const fontDownBtn = document.getElementById("font-down");
-  const fontUpBtn = document.getElementById("font-up");
-  const fontSizeVal = document.getElementById("font-size-val");
+  // ── Editor: Font Size (Toolbar Only) ──
   const spFontDown = document.getElementById("sp-font-down");
   const spFontUp = document.getElementById("sp-font-up");
   const spFontVal = document.getElementById("sp-font-val");
@@ -1677,9 +1701,7 @@
 
   function applyFontSize(size) {
     fontSize = Math.max(MIN_FONT, Math.min(MAX_FONT, size));
-    const label = fontSize;
-    if (fontSizeVal) fontSizeVal.textContent = label;
-    if (spFontVal) spFontVal.textContent = label;
+    if (spFontVal) spFontVal.textContent = fontSize;
     
     codeEl.style.fontSize = `${fontSize}px`;
     codeEl.style.lineHeight = "1.75";
@@ -1687,35 +1709,58 @@
     
     const isMin = fontSize <= MIN_FONT;
     const isMax = fontSize >= MAX_FONT;
-    if (fontDownBtn) fontDownBtn.disabled = isMin;
-    if (fontUpBtn) fontUpBtn.disabled = isMax;
     if (spFontDown) spFontDown.disabled = isMin;
     if (spFontUp) spFontUp.disabled = isMax;
   }
   
-  if (fontDownBtn) fontDownBtn.addEventListener("click", () => applyFontSize(fontSize - 1));
-  if (fontUpBtn) fontUpBtn.addEventListener("click", () => applyFontSize(fontSize + 1));
   if (spFontDown) spFontDown.addEventListener("click", () => applyFontSize(fontSize - 1));
   if (spFontUp) spFontUp.addEventListener("click", () => applyFontSize(fontSize + 1));
 
-  // ── Editor: Tab Size ──
-  const tab2Btn = document.getElementById("tab-2");
-  const tab4Btn = document.getElementById("tab-4");
+  // ── Editor: Tab Size (Toolbar Only) ──
   const spTab2 = document.getElementById("sp-tab-2");
   const spTab4 = document.getElementById("sp-tab-4");
 
   function applyTabSize(size) {
     codeEl.style.tabSize = size;
-    if (tab2Btn) tab2Btn.classList.toggle("setting-active", size === 2);
-    if (tab4Btn) tab4Btn.classList.toggle("setting-active", size === 4);
     if (spTab2) spTab2.classList.toggle("setting-active", size === 2);
     if (spTab4) spTab4.classList.toggle("setting-active", size === 4);
   }
   
-  if (tab2Btn) tab2Btn.addEventListener("click", () => applyTabSize(2));
-  if (tab4Btn) tab4Btn.addEventListener("click", () => applyTabSize(4));
   if (spTab2) spTab2.addEventListener("click", () => applyTabSize(2));
   if (spTab4) spTab4.addEventListener("click", () => applyTabSize(4));
+
+  // ── Music: Volume & Swing ──
+  const volSlider = document.getElementById("master-vol");
+  const volVal = document.getElementById("vol-val");
+  const swingSlider = document.getElementById("global-swing");
+  const swingVal = document.getElementById("swing-val");
+
+  globalThis.globalSwing = 0;
+
+  function applyVolume(val) {
+    const v = parseFloat(val);
+    if (volVal) volVal.textContent = `${Math.round(v * 100)}%`;
+    if (repl && repl.setMasterGain) {
+      repl.setMasterGain(v);
+    }
+  }
+
+  function applySwing(val) {
+    const s = parseFloat(val);
+    globalThis.globalSwing = s;
+    if (swingVal) swingVal.textContent = `${Math.round(s * 100)}%`;
+    // If the repl is active, we can also inject it into the eval scope
+    if (repl && repl.eval) {
+      // It's already in globalThis, so patterns can just use 'globalSwing'
+    }
+  }
+
+  if (volSlider) volSlider.addEventListener("input", (e) => applyVolume(e.target.value));
+  if (swingSlider) swingSlider.addEventListener("input", (e) => applySwing(e.target.value));
+
+  // Initialize values
+  applyVolume(0.7);
+  applySwing(0);
 
   // ── Toolbar Settings Pop-up ──
   const btnSettings = document.getElementById("btn-settings");
@@ -1939,6 +1984,7 @@
           startTime = null;
         }
       });
+      applyVolume(volSlider.value);
       const ctx = getAudioContext() ?? new AudioContext();
       if (ctx.state === "suspended") await ctx.resume();
 
