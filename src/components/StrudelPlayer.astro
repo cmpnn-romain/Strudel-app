@@ -490,8 +490,13 @@ import ToastContainer from './ToastContainer.astro';
     scopeDb.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "— dB";
 
     let pct = 0;
-    if (isFinite(db) && db > -48) {
-      pct = Math.min(100, Math.max(0, ((db + 48) / 48) * 100));
+    if (isFinite(db)) {
+      if (db > 0) pct = 100;
+      else if (db > -6) pct = 75 + ((db + 6) / 6) * 25; // -6 to 0 -> 75 to 100
+      else if (db > -12) pct = 50 + ((db + 12) / 6) * 25; // -12 to -6 -> 50 to 75
+      else if (db > -24) pct = 25 + ((db + 24) / 12) * 25; // -24 to -12 -> 25 to 50
+      else if (db > -48) pct = 0 + ((db + 48) / 24) * 25; // -48 to -24 -> 0 to 25
+      else pct = 0;
     }
     vuL.style.height = `${pct}%`;
     vuR.style.height = `${pct}%`;
