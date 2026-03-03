@@ -24,6 +24,13 @@
 <br>
 <br>
 
+## 📸 Screenshot
+
+![Strudel-app screenshot](public/assets/screenshot.png)
+
+<br>
+<br>
+
 ## 🏃 Quick-Start
 > **Prerequisite:** Ensure you have [Node.js 18+](https://nodejs.org/) and npm installed.
 
