@@ -1063,7 +1063,7 @@ import ToastContainer from './ToastContainer.astro';
   if (btnRecManual) btnRecManual.addEventListener("click", () => startRecording("manual"));
   if (btnRecAuto) btnRecAuto.addEventListener("click", () => startRecording("auto"));
 
-  // --- INFO MODAL LOGIC ---
+  // --- MODAL LOGIC ---
   if (btnInfo) {
     btnInfo.addEventListener("click", () => {
       if (infoModal) infoModal.hidden = false;
@@ -1074,6 +1074,25 @@ import ToastContainer from './ToastContainer.astro';
       if (infoModal) infoModal.hidden = true;
     });
   }
+
+  // Close modals on Esc
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (infoModal && !infoModal.hidden) infoModal.hidden = true;
+      if (recModal && !recModal.hidden) recModal.hidden = true;
+    }
+  });
+
+  // Close modals on background click (overlay)
+  [infoModal, recModal].forEach(modal => {
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.hidden = true;
+        }
+      });
+    }
+  });
 
   codeEl.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
