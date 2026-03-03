@@ -855,7 +855,13 @@ import ToastContainer from './ToastContainer.astro';
       // Strip trailing semicolons so .analyze(1) can be appended safely
       const cleanCode = code.replace(/[;\s]+$/, '');
       const isOnce = loopMode.value === 'once';
-      
+
+      // Check if user code manually sets CPM, update UI if it does
+      const cpmMatch = cleanCode.match(/\.cpm\(\s*(\d+(?:\.\d+)?)\s*\)/);
+      if (cpmMatch && cpmMatch[1]) {
+        applyBpm(parseFloat(cpmMatch[1]));
+      }
+
       const effects = `
         .pan(globalThis.globalPan || 0)
         .hp(globalThis.globalLowCut || 20)
