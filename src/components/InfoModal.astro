@@ -54,6 +54,59 @@
           <p>Adjust editor font size and view general controls.</p>
         </div>
       </div>
+
+      <h4 style="margin-top: 25px;">Instruments Guide (Cloud Streaming)</h4>
+      <p>This DAW is connected to a massive cloud library of over 128 professional General MIDI instruments. They download instantly the first time you use them. Prefix the name with <code>gm_</code>:</p>
+      <div class="reference-grid">
+        <div class="ref-item">
+          <span class="ref-name">s("superpiano")</span>
+          <p>Built-in physical modeled piano. No download required.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_piano")</span>
+          <p>Classic acoustic grand piano from the cloud library.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_electric_piano_1")</span>
+          <p>Rhodes-style electric piano.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_acoustic_guitar_nylon")</span>
+          <p>Warm acoustic nylon guitar.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_electric_guitar_jazz")</span>
+          <p>Clean, warm hollow-body electric guitar.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_acoustic_bass")</span>
+          <p>Deep, authentic upright bass.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_violin")</span>
+          <p>Solo sustained violin.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_string_ensemble_1")</span>
+          <p>Lush, cinematic string section.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_trumpet")</span>
+          <p>Solo bright trumpet.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_tenor_sax")</span>
+          <p>Smooth, breathy tenor saxophone.</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_synth_drum")</span>
+          <p>Electronic drum kit (use note values to trigger different drums).</p>
+        </div>
+        <div class="ref-item">
+          <span class="ref-name">s("gm_choir_aahs")</span>
+          <p>Sustained human choir voices.</p>
+        </div>
+      </div>
     </div>
 
     <button id="btn-info-close" class="modal-cancel">CLOSE</button>
@@ -113,16 +166,19 @@
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   }
   .info-content::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   .info-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+  .info-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
   }
   .lead {
     font-size: 14px;
     color: var(--c-text);
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: 600;
   }
   .info-content p {
@@ -130,6 +186,13 @@
     color: var(--c-muted);
     line-height: 1.6;
     margin-bottom: 20px;
+  }
+  .info-content code {
+    background: rgba(255, 255, 255, 0.1);
+    font-family: var(--f-mono);
+    padding: 2px 4px;
+    border-radius: 3px;
+    color: var(--c-text);
   }
   h4 {
     color: var(--c-accent);
@@ -144,6 +207,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 12px;
+    margin-bottom: 10px;
   }
   .ref-item {
     background: rgba(255, 255, 255, 0.03);
