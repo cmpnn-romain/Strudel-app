@@ -121,7 +121,6 @@ import ToastContainer from './ToastContainer.astro';
 </style>
 
 <script>
-  // @ts-nocheck
   import { webaudioRepl } from "@strudel/webaudio";
   import {
     getAudioContext,
@@ -183,10 +182,10 @@ import ToastContainer from './ToastContainer.astro';
   let isPlaying = false;
   let isAutoRecording = false;
   let stopTimer = null;
-  let anaL = null; // Stereo analyser Left
-  let anaR = null; // Stereo analyser Right
-  let dataL = null; // Left channel data
-  let dataR = null; // Right channel data
+  let anaL = null;
+  let anaR = null;
+  let dataL = null;
+  let dataR = null;
 
   const scopeCtx = scopeCvs.getContext("2d");
   const specCtx = specCvs.getContext("2d");
@@ -215,7 +214,6 @@ import ToastContainer from './ToastContainer.astro';
 
     toastContainer.appendChild(toast);
 
-    // Auto-dismiss after 6 seconds
     setTimeout(dismissToast, 6000);
   }
 
@@ -250,7 +248,6 @@ import ToastContainer from './ToastContainer.astro';
     lnEl.textContent = Array.from({ length: n }, (_, i) => i + 1).join("\n");
   }
 
-  // ── Undo / Redo history ──
   const history = [codeEl.value];
   let historyIndex = 0;
   let historyTimer = null;
@@ -261,7 +258,6 @@ import ToastContainer from './ToastContainer.astro';
   }
 
   function pushHistory(value) {
-    // Trim any redo branch
     history.splice(historyIndex + 1);
     history.push(value);
     historyIndex = history.length - 1;
@@ -279,7 +275,6 @@ import ToastContainer from './ToastContainer.astro';
   codeEl.addEventListener("input", () => {
     syncLineNumbers();
     localStorage.setItem(STORAGE_KEY, codeEl.value);
-    // Debounce: snapshot after 600ms of idle typing
     clearTimeout(historyTimer);
     historyTimer = setTimeout(() => pushHistory(codeEl.value), 600);
   });
@@ -292,7 +287,6 @@ import ToastContainer from './ToastContainer.astro';
   btnUndo.addEventListener("click", () => applyHistory(historyIndex - 1));
   btnRedo.addEventListener("click", () => applyHistory(historyIndex + 1));
 
-  // ── Editor: Font Size (Toolbar Only) ──
   const spFontDown = document.getElementById("sp-font-down");
   const spFontUp = document.getElementById("sp-font-up");
   const spFontVal = document.getElementById("sp-font-val");
@@ -317,7 +311,6 @@ import ToastContainer from './ToastContainer.astro';
   if (spFontDown) spFontDown.addEventListener("click", () => applyFontSize(fontSize - 1));
   if (spFontUp) spFontUp.addEventListener("click", () => applyFontSize(fontSize + 1));
 
-  // ── Music: Volume & Swing & Master FX ──
   const volSlider = document.getElementById("master-vol");
   const volVal = document.getElementById("vol-val");
   const panSlider = document.getElementById("master-pan");
@@ -326,55 +319,28 @@ import ToastContainer from './ToastContainer.astro';
   const lowCutVal = document.getElementById("locut-val");
   const highCutSlider = document.getElementById("master-hicut");
   const highCutVal = document.getElementById("hicut-val");
-  const swingSlider = document.getElementById("global-swing");
-  const swingVal = document.getElementById("swing-val");
-
+  
   const roomSlider = document.getElementById("master-room");
   const roomVal = document.getElementById("room-val");
   const delaySlider = document.getElementById("master-delay");
   const delayVal = document.getElementById("delay-val");
-  const detuneSlider = document.getElementById("master-detune");
-  const detuneVal = document.getElementById("detune-val");
 
-  const qSlider = document.getElementById("master-q");
-  const qVal = document.getElementById("q-val");
-  const driveSlider = document.getElementById("master-drive");
-  const driveVal = document.getElementById("drive-val");
-  const crushSlider = document.getElementById("master-crush");
-  const crushVal = document.getElementById("crush-val");
-  const attackSlider = document.getElementById("master-attack");
-  const attackVal = document.getElementById("attack-val");
-  const releaseSlider = document.getElementById("master-release");
-  const releaseVal = document.getElementById("release-val");
-  const widthSlider = document.getElementById("master-width");
-  const widthVal = document.getElementById("width-val");
-
-  globalThis.globalSwing = 0;
-  globalThis.globalPan = 0;
-  globalThis.globalLowCut = 20;
-  globalThis.globalHighCut = 20000;
   globalThis.globalRoom = 0.1;
   globalThis.globalDelay = 0;
-  globalThis.globalDetune = 0;
-  globalThis.globalQ = 1;
-  globalThis.globalDrive = 0;
-  globalThis.globalCrush = 0;
-  globalThis.globalAttack = 0.005;
-  globalThis.globalRelease = 0.1;
-  globalThis.globalWidth = 1;
+  globalThis.globalLowCut = 20;
+  globalThis.globalHighCut = 20;
+  globalThis.globalPan = 0;
 
   function applyVolume(val) {
     const rawVal = parseFloat(val);
-    const v = rawVal / 100; // Convert 0-100 to 0.0-1.0
+    const v = rawVal / 100;
     if (volVal) volVal.textContent = `${Math.round(rawVal)}%`;
     
-    // Direct control of master gain node
     const controller = getSuperdoughAudioController();
     if (controller && controller.output && controller.output.destinationGain) {
       const gainNode = controller.output.destinationGain;
       const ctx = controller.audioContext;
       const now = ctx.currentTime;
-      // Use a short ramp to avoid clicks
       gainNode.gain.setTargetAtTime(v, now, 0.02);
     }
 
@@ -402,7 +368,8 @@ import ToastContainer from './ToastContainer.astro';
   function applyHighCut(val) {
     const v = parseInt(val);
     globalThis.globalHighCut = v;
-    if (highCutVal) highCutVal.textContent = v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}Hz`;
+    const freq = 20020 - v;
+    if (highCutVal) highCutVal.textContent = freq >= 1000 ? `${(freq/1000).toFixed(1)}k` : `${freq}Hz`;
     if (isPlaying) debouncedUpdateEffects();
   }
 
@@ -412,7 +379,24 @@ import ToastContainer from './ToastContainer.astro';
     clearTimeout(updateTimeout);
     updateTimeout = setTimeout(() => {
       updateMasterEffects();
-    }, 50); // 50ms debounce
+    }, 50);
+  }
+
+  function getMasterEffects() {
+    const pan = (globalThis.globalPan + 1.08) / 2;
+    const hp = globalThis.globalLowCut || 20;
+    const lp = 20020 - (globalThis.globalHighCut || 20000);
+    const room = globalThis.globalRoom || 0;
+    const delay = globalThis.globalDelay || 0;
+    const analyze = 1;
+
+    return `
+        .pan(${pan})
+        .hp(${hp})
+        .lp(${lp})
+        .room(${room})
+        .delay(${delay})
+        .analyze(${analyze})`;
   }
 
   async function updateMasterEffects() {
@@ -420,16 +404,7 @@ import ToastContainer from './ToastContainer.astro';
     const code = codeEl.value.trim();
     if (!code) return;
     
-    // Build the master effect chain once to reuse it
-    const effects = `
-        .pan(globalThis.globalPan || 0)
-        .hp(globalThis.globalLowCut || 20)
-        .lp(globalThis.globalHighCut || 20000)
-        .room(globalThis.globalRoom || 0)
-        .delay(globalThis.globalDelay || 0)
-        .detune(globalThis.globalDetune || 0)
-        .analyze(1)`;
-
+    const effects = getMasterEffects();
     const cleanCode = code.replace(/[;\s]+$/, '');
     try {
       await repl.evaluate(`(\n${cleanCode}\n)${effects}`);
@@ -438,61 +413,10 @@ import ToastContainer from './ToastContainer.astro';
     }
   }
 
-  function applySwing(val) {
-    const s = parseFloat(val);
-    globalThis.globalSwing = s;
-    if (swingVal) swingVal.textContent = `${Math.round(s * 100)}%`;
-  }
-
   function applyRoom(val) {
     const v = parseFloat(val);
     globalThis.globalRoom = v;
     if (roomVal) roomVal.textContent = `${Math.round(v * 100)}%`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyQ(val) {
-    const v = parseFloat(val);
-    globalThis.globalQ = v;
-    if (qVal) qVal.textContent = v.toFixed(1);
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyDrive(val) {
-    const v = parseInt(val);
-    globalThis.globalDrive = v;
-    if (driveVal) driveVal.textContent = `${v}%`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyCrush(val) {
-    const v = parseInt(val);
-    globalThis.globalCrush = v;
-    if (crushVal) crushVal.textContent = v === 0 ? "OFF" : `${v}b`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyAttack(val) {
-    const v = parseFloat(val);
-    globalThis.globalAttack = v;
-    if (attackVal) attackVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyRelease(val) {
-    const v = parseFloat(val);
-    globalThis.globalRelease = v;
-    if (releaseVal) releaseVal.textContent = v < 0.1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
-
-  function applyWidth(val) {
-    const v = parseFloat(val);
-    globalThis.globalWidth = v;
-    if (widthVal) widthVal.textContent = `${Math.round(v * 100)}%`;
-    // Width can be applied by scaling pan or via specific strudel methods if they exist.
-    // In strudel, there isn't a direct master .width() for patterns that works globally easily, 
-    // but .pan can be influenced. For now, we update state.
     if (isPlaying) debouncedUpdateEffects();
   }
 
@@ -503,45 +427,21 @@ import ToastContainer from './ToastContainer.astro';
     if (isPlaying) debouncedUpdateEffects();
   }
 
-  function applyDetune(val) {
-    const v = parseInt(val);
-    globalThis.globalDetune = v;
-    if (detuneVal) detuneVal.textContent = `${v}c`;
-    if (isPlaying) debouncedUpdateEffects();
-  }
 
   if (volSlider) volSlider.addEventListener("input", (e) => applyVolume(e.target.value));
   if (panSlider) panSlider.addEventListener("input", (e) => applyPan(e.target.value));
   if (lowCutSlider) lowCutSlider.addEventListener("input", (e) => applyLowCut(e.target.value));
   if (highCutSlider) highCutSlider.addEventListener("input", (e) => applyHighCut(e.target.value));
-  if (swingSlider) swingSlider.addEventListener("input", (e) => applySwing(e.target.value));
   if (roomSlider) roomSlider.addEventListener("input", (e) => applyRoom(e.target.value));
   if (delaySlider) delaySlider.addEventListener("input", (e) => applyDelay(e.target.value));
-  if (detuneSlider) detuneSlider.addEventListener("input", (e) => applyDetune(e.target.value));
-  if (qSlider) qSlider.addEventListener("input", (e) => applyQ(e.target.value));
-  if (driveSlider) driveSlider.addEventListener("input", (e) => applyDrive(e.target.value));
-  if (crushSlider) crushSlider.addEventListener("input", (e) => applyCrush(e.target.value));
-  if (attackSlider) attackSlider.addEventListener("input", (e) => applyAttack(e.target.value));
-  if (releaseSlider) releaseSlider.addEventListener("input", (e) => applyRelease(e.target.value));
-  if (widthSlider) widthSlider.addEventListener("input", (e) => applyWidth(e.target.value));
 
-  // Initialize values
-  applyVolume(0.7);
+  applyVolume(70);
   applyPan(0);
   applyLowCut(20);
-  applyHighCut(20000);
-  applySwing(0);
+  applyHighCut(20);
   applyRoom(0.1);
   applyDelay(0);
-  applyDetune(0);
-  applyQ(1);
-  applyDrive(0);
-  applyCrush(0);
-  applyAttack(0.005);
-  applyRelease(0.1);
-  applyWidth(1);
 
-  // ── Toolbar Settings Pop-up ──
   const btnSettings = document.getElementById("btn-settings");
   btnSettings.addEventListener("click", (e) => {
     e.preventDefault();
@@ -565,7 +465,7 @@ import ToastContainer from './ToastContainer.astro';
     const rect = cvs.parentElement.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     cvs.width = rect.width * dpr;
-    cvs.height = (rect.height - 26) * dpr; // minus titlebar
+    cvs.height = (rect.height - 26) * dpr;
     cvs.style.width = `${rect.width}px`;
     cvs.style.height = `${rect.height - 26}px`;
   }
@@ -635,7 +535,6 @@ import ToastContainer from './ToastContainer.astro';
       scopeCtx.stroke();
     }
 
-    // --- STEREO VU CALCULATIONS ---
     function getPeak(analyser, buf) {
       if (!analyser || !buf) return -Infinity;
       analyser.getFloatTimeDomainData(buf);
@@ -671,11 +570,11 @@ import ToastContainer from './ToastContainer.astro';
     grad.addColorStop(0.5, "#00e5ff");
     grad.addColorStop(1, "#0077ff");
     scopeCtx.strokeStyle = grad;
-    scopeCtx.lineWidth = 2 * dpr; // Scale thickness for Retina
+    scopeCtx.lineWidth = 2 * dpr;
     scopeCtx.lineJoin = "round";
     scopeCtx.lineCap = "round";
     scopeCtx.shadowColor = "#00e5ff";
-    scopeCtx.shadowBlur = 6 * dpr; // Scale glow for Retina
+    scopeCtx.shadowBlur = 6 * dpr;
     scopeCtx.beginPath();
 
     let triggerIndex = 0;
@@ -692,7 +591,7 @@ import ToastContainer from './ToastContainer.astro';
     let x = 0;
 
     for (let i = 0; i < drawLen; i++) {
-      const idx = triggerIndex + i; // Offset by our zero-crossing anchor
+      const idx = triggerIndex + i;
       const val = idx < waveBuf.length ? waveBuf[idx] : 128;
 
       const y = ((val / 128) * SH) / 2;
@@ -730,7 +629,6 @@ import ToastContainer from './ToastContainer.astro';
       animId = null;
     }
     
-    // Reset VU meters to neutral
     if (vuL) vuL.style.clipPath = "inset(100% 0 0 0)";
     if (vuR) vuR.style.clipPath = "inset(100% 0 0 0)";
     if (scopeDb) scopeDb.textContent = "— dB";
@@ -769,7 +667,7 @@ import ToastContainer from './ToastContainer.astro';
         import("@strudel/tonal"),
         import("@strudel/soundfonts")
       );
-      globalThis.miniAllStrings(); // ← registers the mini-notation string parser
+      globalThis.miniAllStrings();
 
       samples("github:tidalcycles/Dirt-Samples/master").catch(console.warn);
 
@@ -793,11 +691,8 @@ import ToastContainer from './ToastContainer.astro';
       btnInit.disabled = true;
       infoSampleRate.textContent = `${ctx.sampleRate} Hz`;
 
-      // --- STEREO ANALYSER SETUP ---
       const controller = getSuperdoughAudioController();
       const splitter = ctx.createChannelSplitter(2);
-      // Connect master destinationGain to our splitter
-      // This allows us to see the final output post-volume/master effects
       controller.output.destinationGain.connect(splitter);
 
       anaL = ctx.createAnalyser();
@@ -807,8 +702,8 @@ import ToastContainer from './ToastContainer.astro';
       dataL = new Float32Array(anaL.fftSize);
       dataR = new Float32Array(anaR.fftSize);
 
-      splitter.connect(anaL, 0); // Left
-      splitter.connect(anaR, 1); // Right
+      splitter.connect(anaL, 0);
+      splitter.connect(anaR, 1);
 
       return true;
     } catch (err) {
@@ -822,8 +717,8 @@ import ToastContainer from './ToastContainer.astro';
     btnInit.disabled = true;
     const ok = await ensureAudio();
     if (ok) {
-      btnInit.disabled = true; // Disable after successful init
-      btnPlay.disabled = false; // Enable PLAY
+      btnInit.disabled = true;
+      btnPlay.disabled = false;
     } else {
       btnInit.disabled = false;
     }
@@ -839,40 +734,29 @@ import ToastContainer from './ToastContainer.astro';
 
     clearTimeout(stopTimer);
 
-    btnPlay.disabled = true; // grey out PLAY
-    btnStop.disabled = false; // enable STOP
+    btnPlay.disabled = true;
+    btnStop.disabled = false;
 
     isPlaying = true;
     btnPlay.classList.add("is-playing");
-    btnUpdate.disabled = false; // enable UPDATE
+    btnUpdate.disabled = false;
     setStatus("playing", "PLAYING");
     startTime = performance.now();
 
     if (!animId) drawViz();
 
     try {
-      // Strip trailing semicolons so .analyze(1) can be appended safely
       const cleanCode = code.replace(/[;\s]+$/, '');
       const isOnce = loopMode.value === 'once';
 
-      // Check if user code manually sets CPM, update UI if it does
       const cpmMatch = cleanCode.match(/\.cpm\(\s*(\d+(?:\.\d+)?)\s*\)/);
       if (cpmMatch && cpmMatch[1]) {
         applyBpm(parseFloat(cpmMatch[1]));
       }
 
-      const effects = `
-        .pan(globalThis.globalPan || 0)
-        .hp(globalThis.globalLowCut || 20)
-        .lp(globalThis.globalHighCut || 20000)
-        .room(globalThis.globalRoom || 0)
-        .delay(globalThis.globalDelay || 0)
-        .detune(globalThis.globalDetune || 0)
-        .analyze(1)`;
-
+      const effects = getMasterEffects();
       const evalCode = `(\n${cleanCode}\n)${effects}`;
 
-      // Apply master effects to the pattern
       await repl.evaluate(evalCode);
 
       if (isOnce) {
@@ -900,16 +784,16 @@ import ToastContainer from './ToastContainer.astro';
     clearError();
     isPlaying = false;
     btnPlay.classList.remove("is-playing");
-    btnPlay.disabled = false; // re-enable PLAY
-    btnStop.disabled = true; // grey out STOP
-    btnUpdate.disabled = true; // grey out UPDATE
+    btnPlay.disabled = false;
+    btnStop.disabled = true;
+    btnUpdate.disabled = true;
     startTime = null;
     cycleCount = 0;
     stopViz();
     setStatus(ready ? "ready" : "idle", ready ? "READY" : "OFFLINE");
 
     if (mediaRecorder && mediaRecorder.state === "recording") {
-      btnRecVideo.click(); // trigger stop
+      btnRecVideo.click();
     }
   }
 
@@ -922,17 +806,10 @@ import ToastContainer from './ToastContainer.astro';
 
     try {
       const cleanCode = code.replace(/[;\s]+$/, '');
-      const evalCode = `(\n${cleanCode}\n)
-        .pan(globalThis.globalPan || 0)
-        .hp(globalThis.globalLowCut || 20)
-        .lp(globalThis.globalHighCut || 20000)
-        .room(globalThis.globalRoom || 0)
-        .delay(globalThis.globalDelay || 0)
-        .detune(globalThis.globalDetune || 0)
-        .analyze(1)`;
+      const effects = getMasterEffects();
+      const evalCode = `(\n${cleanCode}\n)${effects}`;
 
       await repl.evaluate(evalCode);
-      // feedback animation
       btnUpdate.style.transform = "scale(0.95)";
       setTimeout(() => btnUpdate.style.transform = "", 100);
     } catch (err) {
@@ -1005,12 +882,12 @@ import ToastContainer from './ToastContainer.astro';
   });
 
   async function startRecording(type) {
-    recModal.hidden = true; // hide modal
+    recModal.hidden = true;
 
     try {
       const audioCtx = getAudioContext();
       const dest = audioCtx.createMediaStreamDestination();
-      const wA = analysers[1]; // We can connect our analyser to the media dest
+      const wA = analysers[1];
       if (wA) {
         wA.connect(dest);
       }
@@ -1041,7 +918,6 @@ import ToastContainer from './ToastContainer.astro';
         URL.revokeObjectURL(url);
 
         stream.getTracks().forEach((track) => track.stop());
-        // Disconnect analyser from recording destination to prevent audio graph leakage
         try { if (wA) wA.disconnect(dest); } catch {}
       };
 
@@ -1068,7 +944,6 @@ import ToastContainer from './ToastContainer.astro';
   if (btnRecManual) btnRecManual.addEventListener("click", () => startRecording("manual"));
   if (btnRecAuto) btnRecAuto.addEventListener("click", () => startRecording("auto"));
 
-  // --- MODAL LOGIC ---
   if (btnInfo) {
     btnInfo.addEventListener("click", () => {
       if (infoModal) infoModal.hidden = false;
@@ -1080,7 +955,6 @@ import ToastContainer from './ToastContainer.astro';
     });
   }
 
-  // Close modals on Esc
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       if (infoModal && !infoModal.hidden) infoModal.hidden = true;
@@ -1088,7 +962,6 @@ import ToastContainer from './ToastContainer.astro';
     }
   });
 
-  // Close modals on background click (overlay)
   [infoModal, recModal].forEach(modal => {
     if (modal) {
       modal.addEventListener("click", (e) => {

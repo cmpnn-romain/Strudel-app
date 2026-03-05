@@ -1,8 +1,4 @@
 ---
-/**
- * MusicSettings Component
- * Contains global audio performance controls.
- */
 ---
 <div class="r-panel" id="settings-panel">
   <div class="panel-titlebar">
@@ -10,7 +6,6 @@
   </div>
   <div class="music-settings-content">
     <div class="settings-grid">
-      <!-- ROW 1: CORE & FILTERS -->
       <div class="settings-row">
         <div class="v-slider-group">
           <div class="v-slider-wrap">
@@ -40,18 +35,10 @@
 
         <div class="v-slider-group">
           <div class="v-slider-wrap">
-            <input type="range" id="master-hicut" min="20" max="20000" step="1" value="20000" class="v-slider" />
+            <input type="range" id="master-hicut" min="20" max="20000" step="1" value="20" class="v-slider" />
           </div>
           <span class="v-slider-lbl">HI CUT</span>
           <span id="hicut-val" class="v-slider-val">20k</span>
-        </div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-q" min="0" max="20" step="0.1" value="1" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">FILT Q</span>
-          <span id="q-val" class="v-slider-val">1.0</span>
         </div>
 
         <div class="v-slider-sep"></div>
@@ -72,71 +59,8 @@
           <span id="delay-val" class="v-slider-val">0%</span>
         </div>
 
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-detune" min="-1200" max="1200" step="1" value="0" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">DETUNE</span>
-          <span id="detune-val" class="v-slider-val">0c</span>
-        </div>
       </div>
 
-      <!-- ROW 2: TEXTURES, DYNAMICS & UTILS -->
-      <div class="settings-row">
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-drive" min="0" max="100" step="1" value="0" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">DRIVE</span>
-          <span id="drive-val" class="v-slider-val">0%</span>
-        </div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-crush" min="0" max="16" step="1" value="0" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">CRUSH</span>
-          <span id="crush-val" class="v-slider-val">OFF</span>
-        </div>
-
-        <div class="v-slider-sep"></div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-attack" min="0" max="2" step="0.01" value="0.005" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">ATTACK</span>
-          <span id="attack-val" class="v-slider-val">5ms</span>
-        </div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-release" min="0" max="4" step="0.01" value="0.1" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">RELEASE</span>
-          <span id="release-val" class="v-slider-val">100ms</span>
-        </div>
-
-        <div class="v-slider-sep"></div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="master-width" min="0" max="2" step="0.01" value="1" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">WIDTH</span>
-          <span id="width-val" class="v-slider-val">100%</span>
-        </div>
-
-        <div class="v-slider-sep"></div>
-
-        <div class="v-slider-group">
-          <div class="v-slider-wrap">
-            <input type="range" id="global-swing" min="0" max="1" step="0.01" value="0" class="v-slider" />
-          </div>
-          <span class="v-slider-lbl">SWING</span>
-          <span id="swing-val" class="v-slider-val">0%</span>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -179,10 +103,10 @@
     padding: 10px;
     background: #0a0a0a;
     box-sizing: border-box;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
   .music-settings-content::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
   }
   .settings-grid {
     display: flex;
@@ -240,11 +164,6 @@
     border: 1px solid #000;
     border-radius: 2px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-  }
-  /* Pseudo-element line for thumb */
-  .v-slider::-webkit-slider-thumb {
-    /* To add a thin white line, we rely on border/background tricks, 
-       but standard styling is limited. We'll keep it simple & clean for now. */
   }
   .v-slider::-moz-range-thumb {
     width: 10px;
